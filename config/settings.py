@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     # Model Configuration
     model_path: str = Field(default="models/trained")
     model_version: str = Field(default="v1")
-    enable_zero_day_detection: bool = Field(default=True)
-    anomaly_threshold: float = Field(default=0.3)
+    enable_zero_day_detection: bool = Field(default=False)  # Disabled by default - causes false positives with small datasets
+    anomaly_threshold: float = Field(default=0.7)  # Higher threshold = less sensitive
 
     # Feature Extraction
     enable_dns_lookup: bool = Field(default=True)
