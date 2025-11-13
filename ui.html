@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberV2 - URL Phishing Detector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .result-item {
+            background: #f9f9f9;
+            border-left: 5px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .result-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .result-item.safe {
+            border-left-color: #4caf50;
+            background: #f1f8f4;
+        }
+
+        .result-item.phishing {
+            border-left-color: #f44336;
+            background: #fff3f3;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .result-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .result-url {
+            flex: 1;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge.critical { background: #f44336; color: white; }
+        .badge.high { background: #ff9800; color: white; }
+        .badge.medium { background: #ffc107; color: #333; }
+        .badge.low { background: #8bc34a; color: white; }
+        .badge.safe { background: #4caf50; color: white; }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .api-config {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .api-config input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ CyberV2</h1>
+            <p>URL Zero-Day Phishing Detector with Advanced ML</p>
+        </div>
+
+        <div class="card">
+            <div class="api-config">
+                <label for="apiUrl">API Endpoint:</label>
+                <input type="text" id="apiUrl" value="http://localhost:8000" placeholder="http://localhost:8000">
+            </div>
+
+            <div class="input-group">
+                <label for="urlInput">Enter URLs to Check (one per line):</label>
+                <textarea
+                    id="urlInput"
+                    rows="8"
+                    placeholder="https://www.google.com&#10;http://suspicious-site.tk&#10;https://www.github.com"
+                ></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="analyzeUrls()">🔍 Analyze URLs</button>
+                <button class="btn-secondary" onclick="clearResults()">🗑️ Clear</button>
+            </div>
+
+            <div id="status" class="status"></div>
+
+            <div id="stats" class="stats" style="display: none;"></div>
+
+            <div id="results" class="results"></div>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type} show`;
+            setTimeout(() => status.classList.remove('show'), 5000);
+        }
+
+        function showLoading() {
+            const results = document.getElementById('results');
+            results.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 15px; color: #666;">Analyzing URLs...</p>
+                </div>
+            `;
+        }
+
+        function clearResults() {
+            document.getElementById('urlInput').value = '';
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('status').classList.remove('show');
+        }
+
+        async function analyzeUrls() {
+            const input = document.getElementById('urlInput').value.trim();
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+
+            if (!input) {
+                showStatus('Please enter at least one URL', 'error');
+                return;
+            }
+
+            const urls = input.split('\n').filter(url => url.trim());
+
+            if (urls.length === 0) {
+                showStatus('Please enter valid URLs', 'error');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const endpoint = urls.length === 1 ? '/predict' : '/batch_predict';
+                const payload = urls.length === 1 ? { url: urls[0] } : { urls: urls };
+
+                const response = await fetch(`${apiUrl}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                if (urls.length === 1) {
+                    displayResults([data]);
+                } else {
+                    displayResults(data.predictions);
+                    displayStats(data);
+                }
+
+                showStatus(`✓ Analysis complete! Checked ${urls.length} URL${urls.length > 1 ? 's' : ''}`, 'info');
+
+            } catch (error) {
+                document.getElementById('results').innerHTML = '';
+                showStatus(`Error: ${error.message}. Make sure the API server is running!`, 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        function displayStats(data) {
+            const statsDiv = document.getElementById('stats');
+            statsDiv.style.display = 'grid';
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${data.total_urls}</div>
+                    <div class="stat-label">Total URLs</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);">
+                    <div class="stat-value">${data.phishing_count}</div>
+                    <div class="stat-label">Phishing Detected</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);">
+                    <div class="stat-value">${data.legitimate_count}</div>
+                    <div class="stat-label">Legitimate</div>
+                </div>
+            `;
+        }
+
+        function displayResults(predictions) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            predictions.forEach(result => {
+                const isPhishing = result.is_phishing;
+                const icon = isPhishing ? '🚨' : '✓';
+                const statusClass = isPhishing ? 'phishing' : 'safe';
+                const confidence = (result.confidence * 100).toFixed(1);
+                const riskLevel = result.risk_level.toUpperCase();
+
+                const resultHtml = `
+                    <div class="result-item ${statusClass}">
+                        <div class="result-header">
+                            <span class="result-icon">${icon}</span>
+                            <span class="result-url">${result.url}</span>
+                            <span class="badge ${result.risk_level}">${riskLevel}</span>
+                        </div>
+                        <div class="result-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Status</div>
+                                <div class="detail-value" style="color: ${isPhishing ? '#f44336' : '#4caf50'}">
+                                    ${isPhishing ? 'PHISHING' : 'SAFE'}
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Confidence</div>
+                                <div class="detail-value">${confidence}%</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Detection Method</div>
+                                <div class="detail-value">${result.prediction_source === 'ensemble' ? 'ML Ensemble' : 'Zero-Day'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Zero-Day Alert</div>
+                                <div class="detail-value" style="color: ${result.zero_day_detected ? '#ff9800' : '#666'}">
+                                    ${result.zero_day_detected ? '⚠️ YES' : 'No'}
+                                </div>
+                            </div>
+                            ${result.anomaly_score ? `
+                            <div class="detail-item">
+                                <div class="detail-label">Anomaly Score</div>
+                                <div class="detail-value">${(result.anomaly_score * 100).toFixed(1)}%</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+
+                resultsDiv.innerHTML += resultHtml;
+            });
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('urlInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                analyzeUrls();
+            }
+        });
+
+        // Load sample URLs on page load (optional)
+        window.addEventListener('load', function() {
+            const sampleUrls = `https://www.google.com
+http://suspicious-site.tk
+https://www.github.com`;
+            // Uncomment to auto-load sample URLs:
+            // document.getElementById('urlInput').value = sampleUrls;
+        });
+    </script>
+</body>
+</html>
