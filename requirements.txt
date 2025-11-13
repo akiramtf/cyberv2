@@ -13,7 +13,8 @@ keras>=2.8.0
 # Web Framework
 fastapi>=0.95.0
 uvicorn[standard]>=0.21.0
-pydantic>=1.10.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
 python-multipart>=0.0.6
 
 # URL Analysis
