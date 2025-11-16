@@ -781,6 +781,7 @@ def train_model(
     output_dir: str = None,
     test_size: float = 0.2,
     random_state: int = 42,
+    max_rows: int = None,
 ) -> None:
     """Main training function"""
 
@@ -791,7 +792,14 @@ def train_model(
     # Load data
     if data_path and os.path.exists(data_path):
         logger.info(f"Loading data from {data_path}")
-        df = pd.read_csv(data_path)
+        df = pd.read_csv(data_path, on_bad_lines='skip')
+
+        # Limit rows if specified
+        if max_rows:
+            logger.info(f"Limiting to first {max_rows} rows")
+            df = df.head(max_rows)
+
+        logger.info(f"Loaded {len(df)} total URLs")
         urls = df["url"].tolist()
         labels = df["label"].tolist()
     else:
@@ -867,6 +875,12 @@ def main():
         default=42,
         help="Random seed (default: 42)",
     )
+    parser.add_argument(
+        "--max-rows",
+        type=int,
+        default=None,
+        help="Maximum number of rows to use from CSV (default: all)",
+    )
 
     args = parser.parse_args()
 
@@ -876,6 +890,7 @@ def main():
             output_dir=args.output,
             test_size=args.test_size,
             random_state=args.random_state,
+            max_rows=args.max_rows,
         )
     except Exception as e:
         logger.error(f"Training failed: {e}", exc_info=True)
