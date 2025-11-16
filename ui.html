@@ -554,20 +554,40 @@
                                 <div class="detail-value">${result.anomaly_score ? (result.anomaly_score * 100).toFixed(1) + '%' : '0.0%'}</div>
                             </div>
                             ${result.model_scores ? `
-                            <div class="detail-item" style="grid-column: 1 / -1; margin-top: 10px;">
-                                <div class="detail-label" style="margin-bottom: 8px; font-weight: 600;">Individual Model Scores:</div>
-                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 13px;">
-                                    <div style="background: #f5f5f5; padding: 8px; border-radius: 4px;">
-                                        <div style="color: #666; margin-bottom: 4px;">XGBoost</div>
-                                        <div style="font-weight: 600; color: #2196F3;">${(result.model_scores.xgboost_score * 100).toFixed(1)}%</div>
+                            <div class="detail-item" style="grid-column: 1 / -1; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                                <div class="detail-label" style="margin-bottom: 10px; font-weight: 600; color: #333;">
+                                    Individual Model Scores ${isPhishing ? '(Phishing Probability)' : '(Safe Probability)'}:
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 13px;">
+                                    <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 12px; border-radius: 6px; border: 1px solid #90caf9;">
+                                        <div style="color: #1976d2; margin-bottom: 6px; font-weight: 500;">XGBoost</div>
+                                        <div style="font-weight: 700; font-size: 16px; color: #0d47a1;">
+                                            ${isPhishing ?
+                                                (result.model_scores.xgboost_score * 100).toFixed(1) :
+                                                ((1 - result.model_scores.xgboost_score) * 100).toFixed(1)
+                                            }%
+                                        </div>
+                                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Weight: 40%</div>
                                     </div>
-                                    <div style="background: #f5f5f5; padding: 8px; border-radius: 4px;">
-                                        <div style="color: #666; margin-bottom: 4px;">Random Forest</div>
-                                        <div style="font-weight: 600; color: #4CAF50;">${(result.model_scores.random_forest_score * 100).toFixed(1)}%</div>
+                                    <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 12px; border-radius: 6px; border: 1px solid #81c784;">
+                                        <div style="color: #388e3c; margin-bottom: 6px; font-weight: 500;">Random Forest</div>
+                                        <div style="font-weight: 700; font-size: 16px; color: #1b5e20;">
+                                            ${isPhishing ?
+                                                (result.model_scores.random_forest_score * 100).toFixed(1) :
+                                                ((1 - result.model_scores.random_forest_score) * 100).toFixed(1)
+                                            }%
+                                        </div>
+                                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Weight: 30%</div>
                                     </div>
-                                    <div style="background: #f5f5f5; padding: 8px; border-radius: 4px;">
-                                        <div style="color: #666; margin-bottom: 4px;">Neural Network</div>
-                                        <div style="font-weight: 600; color: #FF9800;">${(result.model_scores.neural_network_score * 100).toFixed(1)}%</div>
+                                    <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 12px; border-radius: 6px; border: 1px solid #ffb74d;">
+                                        <div style="color: #f57c00; margin-bottom: 6px; font-weight: 500;">Neural Network</div>
+                                        <div style="font-weight: 700; font-size: 16px; color: #e65100;">
+                                            ${isPhishing ?
+                                                (result.model_scores.neural_network_score * 100).toFixed(1) :
+                                                ((1 - result.model_scores.neural_network_score) * 100).toFixed(1)
+                                            }%
+                                        </div>
+                                        <div style="font-size: 10px; color: #666; margin-top: 4px;">Weight: 30%</div>
                                     </div>
                                 </div>
                             </div>
