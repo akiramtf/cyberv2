@@ -79,6 +79,13 @@ class BatchURLRequest(BaseModel):
         return validated_urls
 
 
+class ModelScores(BaseModel):
+    """Individual model scores"""
+    xgboost_score: float
+    random_forest_score: float
+    neural_network_score: float
+
+
 class PredictionResponse(BaseModel):
     """Prediction response"""
 
@@ -89,6 +96,7 @@ class PredictionResponse(BaseModel):
     prediction_source: str
     zero_day_detected: bool
     anomaly_score: float
+    model_scores: ModelScores
     timestamp: str
 
 
