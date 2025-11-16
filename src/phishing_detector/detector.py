@@ -82,11 +82,7 @@ class PhishingDetector:
                 "zero_day_detected": False,
                 "anomaly_score": 0.0,
                 "risk_level": "safe",
-                "model_scores": {
-                    "xgboost_score": 0.0,
-                    "random_forest_score": 0.0,
-                    "neural_network_score": 0.0,
-                },
+                "model_scores": None,  # No ML models used for whitelisted domains
             }
 
         # Extract features

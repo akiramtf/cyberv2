@@ -96,7 +96,7 @@ class PredictionResponse(BaseModel):
     prediction_source: str
     zero_day_detected: bool
     anomaly_score: float
-    model_scores: ModelScores
+    model_scores: Optional[ModelScores]  # None for whitelisted domains
     timestamp: str
 
 
