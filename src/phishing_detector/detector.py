@@ -230,16 +230,17 @@ class PhishingDetector:
         # Load ensemble classifier
         self.ensemble_classifier.load(directory)
 
-        # Load zero-day detector
-        if self.enable_zero_day:
-            zero_day_scaler_path = os.path.join(directory, "zero_day_scaler.pkl")
-            if os.path.exists(zero_day_scaler_path):
+        # Always load zero-day detector if it exists (for anomaly score display)
+        # But only use it for predictions if enable_zero_day is True
+        zero_day_scaler_path = os.path.join(directory, "zero_day_scaler.pkl")
+        if os.path.exists(zero_day_scaler_path):
+            if self.zero_day_detector is None:
                 self.zero_day_detector = ZeroDayDetector()
-                self.zero_day_detector.load(directory)
-            else:
-                logger.warning("Zero-day detector not found, disabling zero-day detection")
-                self.enable_zero_day = False
-                self.zero_day_detector = None
+            self.zero_day_detector.load(directory)
+            logger.info("Zero-day detector loaded (anomaly scores will be displayed)")
+        else:
+            logger.warning("Zero-day detector not found, anomaly scores will show 0.0%")
+            self.zero_day_detector = None
 
         self.is_trained = True
         logger.info(f"Phishing detector loaded from {directory}")
