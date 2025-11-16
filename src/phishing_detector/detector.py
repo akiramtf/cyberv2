@@ -77,7 +77,7 @@ class PhishingDetector:
             return {
                 "url": url,
                 "is_phishing": False,
-                "confidence": 0.95,  # High confidence for whitelisted domains
+                "confidence": 0.99,  # Very high confidence for known legitimate domains
                 "prediction_source": "domain_whitelist",
                 "zero_day_detected": False,
                 "anomaly_score": 0.0,
