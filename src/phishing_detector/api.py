@@ -92,6 +92,7 @@ class PredictionResponse(BaseModel):
     url: str
     is_phishing: bool
     confidence: float
+    ensemble_score: float  # Raw ML ensemble score (phishing probability)
     risk_level: str
     prediction_source: str
     zero_day_detected: bool

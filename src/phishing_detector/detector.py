@@ -78,6 +78,7 @@ class PhishingDetector:
                 "url": url,
                 "is_phishing": False,
                 "confidence": 0.99,  # Very high confidence for known legitimate domains
+                "ensemble_score": 0.0,  # No ML ensemble used for whitelisted domains
                 "prediction_source": "domain_whitelist",
                 "zero_day_detected": False,
                 "anomaly_score": 0.0,
@@ -108,6 +109,7 @@ class PhishingDetector:
             "url": url,
             "is_phishing": bool(ensemble_prediction),
             "confidence": float(confidence),
+            "ensemble_score": float(ensemble_proba),  # Raw ML ensemble score (phishing probability)
             "prediction_source": "ensemble",
             "zero_day_detected": False,
             "anomaly_score": 0.0,

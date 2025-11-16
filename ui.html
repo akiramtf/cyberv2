@@ -550,8 +550,8 @@
                                 }</div>
                             </div>
                             <div class="detail-item">
-                                <div class="detail-label">Anomaly Score</div>
-                                <div class="detail-value">${result.anomaly_score ? (result.anomaly_score * 100).toFixed(1) + '%' : '0.0%'}</div>
+                                <div class="detail-label">ML Ensemble Score</div>
+                                <div class="detail-value">${(result.ensemble_score * 100).toFixed(1)}% phishing</div>
                             </div>
                         </div>
                     </div>
