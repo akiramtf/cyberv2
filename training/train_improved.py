@@ -799,7 +799,18 @@ def train_model(
             logger.info(f"Limiting to first {max_rows} rows")
             df = df.head(max_rows)
 
+        # Convert labels to integers
+        df['label'] = pd.to_numeric(df['label'], errors='coerce')
+        df = df.dropna(subset=['label'])
+        df['label'] = df['label'].astype(int)
+
+        # Filter valid labels (0 or 1)
+        df = df[df['label'].isin([0, 1])]
+
         logger.info(f"Loaded {len(df)} total URLs")
+        logger.info(f"  Legitimate (0): {len(df[df['label'] == 0])}")
+        logger.info(f"  Phishing (1): {len(df[df['label'] == 1])}")
+
         urls = df["url"].tolist()
         labels = df["label"].tolist()
     else:
