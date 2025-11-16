@@ -8,6 +8,8 @@ import logging
 from .features.extractor import FeatureExtractor
 from .models.ensemble_classifier import EnsembleClassifier
 from .models.zero_day_detector import ZeroDayDetector
+from .utils.url_parser import parse_url
+from .legitimate_domains import LEGITIMATE_DOMAINS
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +66,23 @@ class PhishingDetector:
         """
         if not self.is_trained:
             raise ValueError("Detector must be trained before prediction")
+
+        # Check domain whitelist first (domain-based classification)
+        # Extract domain (SLD + TLD) from URL
+        parsed = parse_url(url)
+        domain = parsed.get("domain", "")  # e.g., "google.com"
+
+        # If domain is in whitelist, immediately return SAFE
+        if domain.lower() in LEGITIMATE_DOMAINS:
+            return {
+                "url": url,
+                "is_phishing": False,
+                "confidence": 0.95,  # High confidence for whitelisted domains
+                "prediction_source": "domain_whitelist",
+                "zero_day_detected": False,
+                "anomaly_score": 0.0,
+                "risk_level": "safe",
+            }
 
         # Extract features
         features = self.feature_extractor.extract_features(url)

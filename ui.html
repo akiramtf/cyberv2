@@ -544,7 +544,10 @@
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Detection Method</div>
-                                <div class="detail-value">${result.prediction_source === 'ensemble' ? 'ML Ensemble' : 'Zero-Day'}</div>
+                                <div class="detail-value">${
+                                    result.prediction_source === 'domain_whitelist' ? 'Domain Whitelist ✓' :
+                                    result.prediction_source === 'ensemble' ? 'ML Ensemble' : 'Zero-Day'
+                                }</div>
                             </div>
                             <div class="detail-item">
                                 <div class="detail-label">Zero-Day Alert</div>
