@@ -44,11 +44,37 @@ def load_data(csv_file: str) -> pd.DataFrame:
     """Load training data from CSV file"""
     logger.info(f"Loading data from: {csv_file}")
 
-    df = pd.read_csv(csv_file)
+    # Try different parsing strategies
+    try:
+        # First try: standard CSV with proper quoting
+        df = pd.read_csv(csv_file, quoting=1, on_bad_lines='skip')
+    except Exception as e:
+        logger.warning(f"Standard parsing failed: {e}")
+        try:
+            # Second try: read all lines manually
+            logger.info("Trying manual parsing...")
+            df = pd.read_csv(csv_file, on_bad_lines='skip', encoding='utf-8', engine='python')
+        except Exception as e2:
+            logger.warning(f"Python engine failed: {e2}")
+            # Third try: read with error skipping
+            logger.info("Trying with error handling...")
+            df = pd.read_csv(csv_file, on_bad_lines='warn', encoding='utf-8')
 
     # Verify columns
     if 'url' not in df.columns or 'label' not in df.columns:
-        raise ValueError("CSV must have 'url' and 'label' columns")
+        raise ValueError(
+            f"CSV must have 'url' and 'label' columns. Found columns: {list(df.columns)}"
+        )
+
+    # Clean data
+    df = df[['url', 'label']].copy()
+    df = df.dropna()
+
+    # Ensure label is int
+    df['label'] = df['label'].astype(int)
+
+    # Filter valid labels
+    df = df[df['label'].isin([0, 1])]
 
     logger.info(f"Loaded {len(df)} URLs")
     logger.info(f"  Legitimate: {len(df[df['label'] == 0])}")
