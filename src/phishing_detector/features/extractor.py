@@ -92,7 +92,6 @@ class FeatureExtractor:
             "has_ip_address": 0.0,
             "has_port": 0.0,
             "has_https": 0.0,
-            "has_www": 0.0,
             "has_double_slash_in_path": 0.0,
             "has_at_symbol": 0.0,
             "has_hyphen_in_domain": 0.0,

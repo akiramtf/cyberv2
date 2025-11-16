@@ -45,7 +45,7 @@ class LexicalFeatures:
         features["has_ip_address"] = float(self._is_ip_address(components["hostname"]))
         features["has_port"] = float(components["port"] is not None)
         features["has_https"] = float(components["scheme"] == "https")
-        features["has_www"] = float("www" in components["subdomain"].lower())
+        # Note: has_www removed - subdomain is normalized to ignore www prefix
 
         # Suspicious patterns
         features["has_double_slash_in_path"] = float("//" in components["path"])

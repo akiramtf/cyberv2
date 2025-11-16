@@ -41,6 +41,13 @@ class URLParser:
         parsed = urlparse(url)
         extracted = tldextract.extract(url)
 
+        # Normalize subdomain: remove "www." prefix to treat www.example.com same as example.com
+        subdomain = extracted.subdomain or ""
+        if subdomain.lower() == "www":
+            subdomain = ""
+        elif subdomain.lower().startswith("www."):
+            subdomain = subdomain[4:]  # Remove "www." prefix
+
         components = {
             "url": url,
             "scheme": parsed.scheme or "",
@@ -54,7 +61,7 @@ class URLParser:
             "hostname": parsed.hostname or "",
             "port": parsed.port,
             "domain": extracted.domain or "",
-            "subdomain": extracted.subdomain or "",
+            "subdomain": subdomain,  # Use normalized subdomain
             "suffix": extracted.suffix or "",
             "registered_domain": extracted.registered_domain or "",
             "fqdn": extracted.fqdn or "",
