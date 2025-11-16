@@ -717,7 +717,8 @@ def extract_features_from_urls(urls: list, labels: list) -> tuple:
         try:
             features = feature_extractor.extract_features(url)
             features_list.append(features)
-            valid_labels.append(label)
+            # Ensure label is integer
+            valid_labels.append(int(label))
         except Exception as e:
             logger.warning(f"Failed to extract features from {url}: {e}")
 
@@ -729,7 +730,7 @@ def extract_features_from_urls(urls: list, labels: list) -> tuple:
 
     # Convert to numpy arrays
     X = df_features.values
-    y = np.array(valid_labels)
+    y = np.array(valid_labels, dtype=np.int32)
 
     logger.info(f"Extracted {X.shape[1]} features from {X.shape[0]} URLs")
 
