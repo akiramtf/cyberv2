@@ -2,6 +2,16 @@
 
 import pandas as pd
 import sys
+import os
+
+# Add training directory to path to import legitimate URLs
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'training'))
+
+try:
+    from train_improved import load_improved_sample_data
+    USE_IMPROVED_DATA = True
+except ImportError:
+    USE_IMPROVED_DATA = False
 
 def prepare_training_data(phishing_csv_path, output_path="data/processed/training_data.csv", max_samples=1000):
     """
@@ -34,132 +44,39 @@ def prepare_training_data(phishing_csv_path, output_path="data/processed/trainin
     phishing_urls = df_phishing['url'].dropna().unique()[:max_samples]
     print(f"\nUsing {len(phishing_urls)} phishing URLs")
 
-    # Legitimate URLs (popular, trusted sites)
-    legitimate_urls = [
-        # Search engines
-        "https://www.google.com",
-        "https://www.bing.com",
-        "https://www.yahoo.com",
-        "https://duckduckgo.com",
-        "https://www.baidu.com",
-        # Social media
-        "https://www.facebook.com",
-        "https://www.twitter.com",
-        "https://www.instagram.com",
-        "https://www.linkedin.com",
-        "https://www.reddit.com",
-        "https://www.pinterest.com",
-        "https://www.tumblr.com",
-        "https://www.snapchat.com",
-        "https://www.tiktok.com",
-        # Tech companies
-        "https://www.microsoft.com",
-        "https://www.apple.com",
-        "https://www.amazon.com",
-        "https://www.google.com/gmail",
-        "https://www.icloud.com",
-        "https://www.samsung.com",
-        "https://www.sony.com",
-        "https://www.adobe.com",
-        "https://www.oracle.com",
-        "https://www.ibm.com",
-        "https://www.intel.com",
-        "https://www.nvidia.com",
-        # E-commerce
-        "https://www.ebay.com",
-        "https://www.etsy.com",
-        "https://www.walmart.com",
-        "https://www.target.com",
-        "https://www.bestbuy.com",
-        "https://www.aliexpress.com",
-        "https://www.alibaba.com",
-        # Streaming
-        "https://www.netflix.com",
-        "https://www.youtube.com",
-        "https://www.spotify.com",
-        "https://www.hulu.com",
-        "https://www.twitch.tv",
-        "https://www.disneyplus.com",
-        "https://www.primevideo.com",
-        # Development
-        "https://www.github.com",
-        "https://stackoverflow.com",
-        "https://www.gitlab.com",
-        "https://www.bitbucket.org",
-        "https://www.docker.com",
-        "https://www.python.org",
-        "https://www.java.com",
-        "https://www.ruby-lang.org",
-        "https://www.php.net",
-        "https://www.golang.org",
-        # Cloud
-        "https://aws.amazon.com",
-        "https://cloud.google.com",
-        "https://azure.microsoft.com",
-        "https://www.digitalocean.com",
-        "https://www.heroku.com",
-        # News
-        "https://www.cnn.com",
-        "https://www.bbc.com",
-        "https://www.nytimes.com",
-        "https://www.theguardian.com",
-        "https://www.reuters.com",
-        "https://www.bloomberg.com",
-        "https://www.wsj.com",
-        "https://www.forbes.com",
-        # Education
-        "https://www.wikipedia.org",
-        "https://www.coursera.org",
-        "https://www.udemy.com",
-        "https://www.edx.org",
-        "https://www.khanacademy.org",
-        "https://www.mit.edu",
-        "https://www.stanford.edu",
-        "https://www.harvard.edu",
-        # Finance
-        "https://www.paypal.com",
-        "https://www.stripe.com",
-        "https://www.square.com",
-        "https://www.venmo.com",
-        "https://www.chase.com",
-        "https://www.bankofamerica.com",
-        "https://www.wellsfargo.com",
-        "https://www.citibank.com",
-        # Productivity
-        "https://www.dropbox.com",
-        "https://drive.google.com",
-        "https://onedrive.live.com",
-        "https://www.zoom.us",
-        "https://www.slack.com",
-        "https://www.trello.com",
-        "https://www.notion.so",
-        "https://www.asana.com",
-        "https://www.monday.com",
-        # Email
-        "https://mail.google.com",
-        "https://outlook.live.com",
-        "https://mail.yahoo.com",
-        "https://www.protonmail.com",
-        # Travel
-        "https://www.booking.com",
-        "https://www.airbnb.com",
-        "https://www.expedia.com",
-        "https://www.tripadvisor.com",
-        # Other popular sites
-        "https://www.wordpress.com",
-        "https://www.blogger.com",
-        "https://www.medium.com",
-        "https://www.quora.com",
-        "https://www.imdb.com",
-        "https://www.yelp.com",
-    ]
+    # Legitimate URLs will be loaded from train_improved.py (120+ URLs)
+    # This provides both www/non-www variants and legitimate subdomains
+    legitimate_urls = []
+
+    # Load legitimate URLs from train_improved.py
+    if USE_IMPROVED_DATA:
+        print(f"Loading legitimate URLs from training data...")
+        try:
+            df_improved = load_improved_sample_data()
+            legitimate_urls = df_improved[df_improved['label'] == 0]['url'].tolist()
+            print(f"Loaded {len(legitimate_urls)} legitimate URLs")
+        except Exception as e:
+            print(f"⚠️  Error: Could not load legitimate URLs: {e}")
+            print(f"   Please ensure train_improved.py is available.")
+            sys.exit(1)
+    else:
+        print(f"⚠️  Error: Could not import train_improved.py")
+        print(f"   Please ensure the training module is available.")
+        sys.exit(1)
 
     # Match the number of legitimate URLs to phishing URLs
     num_legitimate_needed = min(len(phishing_urls), len(legitimate_urls))
+
+    if num_legitimate_needed < len(phishing_urls):
+        print(f"⚠️  WARNING: Only {num_legitimate_needed} legitimate URLs available,")
+        print(f"   but you requested {len(phishing_urls)} phishing samples.")
+        print(f"   Using {num_legitimate_needed} of each for balanced training.")
+
     legitimate_urls = legitimate_urls[:num_legitimate_needed]
     phishing_urls = phishing_urls[:num_legitimate_needed]
 
     print(f"Using {len(legitimate_urls)} legitimate URLs")
+    print(f"Using {len(phishing_urls)} phishing URLs")
 
     # Create combined DataFrame
     df_combined = pd.DataFrame({
