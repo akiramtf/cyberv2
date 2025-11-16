@@ -244,9 +244,9 @@ class PhishingDetector:
             if self.zero_day_detector is None:
                 self.zero_day_detector = ZeroDayDetector()
             self.zero_day_detector.load(directory)
-            logger.info("Zero-day detector loaded (anomaly scores will be displayed)")
+            logger.info("Zero-day detector loaded")
         else:
-            logger.warning("Zero-day detector not found, anomaly scores will show 0.0%")
+            logger.warning("Zero-day detector not found")
             self.zero_day_detector = None
 
         self.is_trained = True
