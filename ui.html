@@ -553,6 +553,25 @@
                                 <div class="detail-label">Anomaly Score</div>
                                 <div class="detail-value">${result.anomaly_score ? (result.anomaly_score * 100).toFixed(1) + '%' : '0.0%'}</div>
                             </div>
+                            ${result.model_scores ? `
+                            <div class="detail-item" style="grid-column: 1 / -1; margin-top: 10px;">
+                                <div class="detail-label" style="margin-bottom: 8px; font-weight: 600;">Individual Model Scores:</div>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 13px;">
+                                    <div style="background: #f5f5f5; padding: 8px; border-radius: 4px;">
+                                        <div style="color: #666; margin-bottom: 4px;">XGBoost</div>
+                                        <div style="font-weight: 600; color: #2196F3;">${(result.model_scores.xgboost_score * 100).toFixed(1)}%</div>
+                                    </div>
+                                    <div style="background: #f5f5f5; padding: 8px; border-radius: 4px;">
+                                        <div style="color: #666; margin-bottom: 4px;">Random Forest</div>
+                                        <div style="font-weight: 600; color: #4CAF50;">${(result.model_scores.random_forest_score * 100).toFixed(1)}%</div>
+                                    </div>
+                                    <div style="background: #f5f5f5; padding: 8px; border-radius: 4px;">
+                                        <div style="color: #666; margin-bottom: 4px;">Neural Network</div>
+                                        <div style="font-weight: 600; color: #FF9800;">${(result.model_scores.neural_network_score * 100).toFixed(1)}%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                 `;

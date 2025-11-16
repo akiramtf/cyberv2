@@ -203,6 +203,24 @@ class EnsembleClassifier:
 
         return weighted_proba
 
+    def get_individual_predictions(self, X: np.ndarray) -> dict:
+        """Get individual model predictions and probabilities"""
+        if not self.is_trained:
+            raise ValueError("Models must be trained before prediction")
+
+        X_scaled = self.scaler.transform(X)
+
+        # Get probability predictions from each model
+        xgb_proba = self.xgb_model.predict_proba(X_scaled)[:, 1]
+        rf_proba = self.rf_model.predict_proba(X_scaled)[:, 1]
+        nn_proba = self.nn_model.predict(X_scaled, verbose=0).flatten()
+
+        return {
+            "xgboost_score": float(xgb_proba[0]),
+            "random_forest_score": float(rf_proba[0]),
+            "neural_network_score": float(nn_proba[0]),
+        }
+
     def get_feature_importance(self) -> Dict[str, float]:
         """Get feature importance from tree-based models"""
         if not self.is_trained:

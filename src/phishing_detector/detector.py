@@ -82,6 +82,11 @@ class PhishingDetector:
                 "zero_day_detected": False,
                 "anomaly_score": 0.0,
                 "risk_level": "safe",
+                "model_scores": {
+                    "xgboost_score": 0.0,
+                    "random_forest_score": 0.0,
+                    "neural_network_score": 0.0,
+                },
             }
 
         # Extract features
@@ -91,6 +96,9 @@ class PhishingDetector:
         # Get ensemble prediction
         ensemble_proba = self.ensemble_classifier.predict_proba(feature_values)[0]
         ensemble_prediction = int(ensemble_proba >= 0.5)
+
+        # Get individual model scores
+        individual_scores = self.ensemble_classifier.get_individual_predictions(feature_values)
 
         # Calculate confidence: for safe URLs, invert the probability
         # This makes confidence represent "how confident we are in the prediction"
@@ -107,6 +115,7 @@ class PhishingDetector:
             "prediction_source": "ensemble",
             "zero_day_detected": False,
             "anomaly_score": 0.0,
+            "model_scores": individual_scores,  # Add individual model scores
         }
 
         # Always calculate anomaly score if zero-day detector exists (for display)
