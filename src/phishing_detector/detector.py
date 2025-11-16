@@ -73,10 +73,18 @@ class PhishingDetector:
         ensemble_proba = self.ensemble_classifier.predict_proba(feature_values)[0]
         ensemble_prediction = int(ensemble_proba >= 0.5)
 
+        # Calculate confidence: for safe URLs, invert the probability
+        # This makes confidence represent "how confident we are in the prediction"
+        # rather than "probability of phishing"
+        if ensemble_prediction == 1:  # Phishing
+            confidence = ensemble_proba
+        else:  # Safe
+            confidence = 1.0 - ensemble_proba
+
         result = {
             "url": url,
             "is_phishing": bool(ensemble_prediction),
-            "confidence": float(ensemble_proba),
+            "confidence": float(confidence),
             "prediction_source": "ensemble",
             "zero_day_detected": False,
             "anomaly_score": 0.0,
@@ -96,8 +104,9 @@ class PhishingDetector:
                 result["prediction_source"] = "zero_day_detector"
                 result["confidence"] = float(anomaly_score)
 
-        # Risk level
+        # Risk level based on confidence
         if result["is_phishing"]:
+            # For phishing: higher confidence = higher risk
             if result["confidence"] >= 0.9:
                 result["risk_level"] = "critical"
             elif result["confidence"] >= 0.7:
@@ -105,10 +114,13 @@ class PhishingDetector:
             else:
                 result["risk_level"] = "medium"
         else:
-            if result["confidence"] <= 0.3:
+            # For safe: higher confidence = lower risk
+            if result["confidence"] >= 0.9:
                 result["risk_level"] = "safe"
-            else:
+            elif result["confidence"] >= 0.7:
                 result["risk_level"] = "low"
+            else:
+                result["risk_level"] = "medium"
 
         return result
 
