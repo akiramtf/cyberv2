@@ -109,19 +109,22 @@ class PhishingDetector:
             "anomaly_score": 0.0,
         }
 
-        # Zero-day detection
-        if self.enable_zero_day and self.zero_day_detector is not None:
+        # Always calculate anomaly score if zero-day detector exists (for display)
+        # But only use it for prediction if enable_zero_day is True
+        if self.zero_day_detector is not None:
             anomaly_score = self.zero_day_detector.predict_anomaly_score(feature_values)[0]
-            is_anomaly = anomaly_score >= self.anomaly_threshold
-
             result["anomaly_score"] = float(anomaly_score)
-            result["zero_day_detected"] = bool(is_anomaly)
 
-            # If zero-day detected but ensemble says legitimate, flag as suspicious
-            if is_anomaly and not ensemble_prediction:
-                result["is_phishing"] = True
-                result["prediction_source"] = "zero_day_detector"
-                result["confidence"] = float(anomaly_score)
+            # Only use anomaly detection for prediction if enabled
+            if self.enable_zero_day:
+                is_anomaly = anomaly_score >= self.anomaly_threshold
+                result["zero_day_detected"] = bool(is_anomaly)
+
+                # If zero-day detected but ensemble says legitimate, flag as suspicious
+                if is_anomaly and not ensemble_prediction:
+                    result["is_phishing"] = True
+                    result["prediction_source"] = "zero_day_detector"
+                    result["confidence"] = float(anomaly_score)
 
         # Risk level based on confidence
         if result["is_phishing"]:
