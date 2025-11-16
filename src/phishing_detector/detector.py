@@ -8,8 +8,8 @@ import logging
 from .features.extractor import FeatureExtractor
 from .models.ensemble_classifier import EnsembleClassifier
 from .models.zero_day_detector import ZeroDayDetector
-from .utils.url_parser import parse_url
 from .legitimate_domains import LEGITIMATE_DOMAINS
+import tldextract
 
 logger = logging.getLogger(__name__)
 
@@ -68,12 +68,12 @@ class PhishingDetector:
             raise ValueError("Detector must be trained before prediction")
 
         # Check domain whitelist first (domain-based classification)
-        # Extract domain (SLD + TLD) from URL
-        parsed = parse_url(url)
-        domain = parsed.get("domain", "")  # e.g., "google.com"
+        # Extract domain (SLD + TLD) from URL using tldextract
+        extracted = tldextract.extract(url)
+        domain = f"{extracted.domain}.{extracted.suffix}".lower()  # e.g., "google.com"
 
         # If domain is in whitelist, immediately return SAFE
-        if domain.lower() in LEGITIMATE_DOMAINS:
+        if domain in LEGITIMATE_DOMAINS:
             return {
                 "url": url,
                 "is_phishing": False,
