@@ -60,25 +60,43 @@ def load_data(csv_file: str) -> pd.DataFrame:
             logger.info("Trying with error handling...")
             df = pd.read_csv(csv_file, on_bad_lines='warn', encoding='utf-8')
 
+    logger.info(f"CSV columns found: {list(df.columns)}")
+    logger.info(f"First few rows:\n{df.head()}")
+
     # Verify columns
     if 'url' not in df.columns or 'label' not in df.columns:
         raise ValueError(
-            f"CSV must have 'url' and 'label' columns. Found columns: {list(df.columns)}"
+            f"CSV must have 'url' and 'label' columns. Found columns: {list(df.columns)}\n"
+            f"First row: {df.iloc[0].to_dict() if len(df) > 0 else 'Empty'}"
         )
 
     # Clean data
     df = df[['url', 'label']].copy()
     df = df.dropna()
 
-    # Ensure label is int
-    df['label'] = df['label'].astype(int)
+    logger.info(f"Sample labels before conversion: {df['label'].head(10).tolist()}")
 
-    # Filter valid labels
+    # Try to convert label to int, handle non-numeric values
+    def safe_label_convert(label):
+        try:
+            # If it's already numeric
+            return int(label)
+        except (ValueError, TypeError):
+            # If it's a string, treat as phishing
+            logger.warning(f"Non-numeric label found: '{label}', treating as phishing (1)")
+            return 1
+
+    df['label'] = df['label'].apply(safe_label_convert)
+
+    # Filter valid labels (0 or 1)
     df = df[df['label'].isin([0, 1])]
 
     logger.info(f"Loaded {len(df)} URLs")
     logger.info(f"  Legitimate: {len(df[df['label'] == 0])}")
     logger.info(f"  Phishing: {len(df[df['label'] == 1])}")
+
+    if len(df) == 0:
+        raise ValueError("No valid data found in CSV file!")
 
     return df
 
