@@ -550,17 +550,9 @@
                                 }</div>
                             </div>
                             <div class="detail-item">
-                                <div class="detail-label">Zero-Day Alert</div>
-                                <div class="detail-value" style="color: ${result.zero_day_detected ? '#ff9800' : '#666'}">
-                                    ${result.zero_day_detected ? '⚠️ YES' : 'No'}
-                                </div>
-                            </div>
-                            ${result.anomaly_score ? `
-                            <div class="detail-item">
                                 <div class="detail-label">Anomaly Score</div>
-                                <div class="detail-value">${(result.anomaly_score * 100).toFixed(1)}%</div>
+                                <div class="detail-value">${result.anomaly_score ? (result.anomaly_score * 100).toFixed(1) + '%' : '0.0%'}</div>
                             </div>
-                            ` : ''}
                         </div>
                     </div>
                 `;
