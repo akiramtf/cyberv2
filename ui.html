@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -30,21 +30,27 @@
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: 3em;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
         .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            font-size: 0.9em;
+            opacity: 0.8;
         }
 
         .card {
             background: white;
             border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 35px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             margin-bottom: 20px;
         }
 
@@ -54,36 +60,46 @@
 
         .input-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
             color: #333;
+            font-size: 16px;
+        }
+
+        .input-group .label-hint {
+            font-weight: 400;
+            color: #666;
+            font-size: 13px;
+            margin-left: 5px;
         }
 
         .input-group textarea {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 14px;
             font-family: 'Courier New', monospace;
             resize: vertical;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            min-height: 180px;
         }
 
         .input-group textarea:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
         button {
             flex: 1;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -97,30 +113,34 @@
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .btn-secondary {
             background: #f5f5f5;
             color: #333;
+            border: 2px solid #e0e0e0;
         }
 
-        .btn-secondary:hover {
-            background: #e0e0e0;
+        .btn-secondary:hover:not(:disabled) {
+            background: #e8e8e8;
+            border-color: #ccc;
         }
 
         button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none !important;
         }
 
         .status {
-            padding: 10px 15px;
+            padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 20px;
             display: none;
+            font-weight: 500;
         }
 
         .status.info {
@@ -137,6 +157,18 @@
 
         .status.show {
             display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .results {
@@ -146,14 +178,27 @@
         .result-item {
             background: #f9f9f9;
             border-left: 5px solid #ccc;
-            padding: 15px;
+            padding: 18px;
             margin-bottom: 15px;
             border-radius: 8px;
             transition: all 0.3s;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .result-item:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
         }
 
         .result-item.safe {
@@ -169,51 +214,59 @@
         .result-header {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .result-icon {
-            font-size: 24px;
-            margin-right: 10px;
+            font-size: 28px;
+            margin-right: 12px;
         }
 
         .result-url {
             flex: 1;
             font-weight: 600;
+            font-size: 15px;
             word-break: break-all;
+            color: #333;
         }
 
         .result-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .detail-item {
             background: white;
-            padding: 8px;
-            border-radius: 5px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #f0f0f0;
         }
 
         .detail-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 4px;
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .detail-value {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 15px;
+            color: #333;
         }
 
         .badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 5px 14px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
             margin-left: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .badge.critical { background: #f44336; color: white; }
@@ -224,17 +277,17 @@
 
         .loading {
             text-align: center;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -244,43 +297,63 @@
 
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 25px;
+            border-radius: 12px;
             text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
         }
 
         .stat-value {
-            font-size: 2em;
+            font-size: 2.5em;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .stat-label {
+            opacity: 0.95;
+            font-size: 1em;
+            letter-spacing: 0.5px;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
             opacity: 0.9;
-            font-size: 0.9em;
         }
 
-        .api-config {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 8px;
-        }
-
-        .api-config input {
-            width: 100%;
-            padding: 8px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
+        .footer p {
+            margin: 5px 0;
             font-size: 14px;
+        }
+
+        .footer .hint {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
+        .keyboard-hint {
+            display: inline-block;
+            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 0 2px;
         }
     </style>
 </head>
@@ -288,27 +361,30 @@
     <div class="container">
         <div class="header">
             <h1>🛡️ CyberV2</h1>
-            <p>URL Zero-Day Phishing Detector with Advanced ML</p>
+            <p>URL Zero-Day Phishing Detector</p>
+            <p class="subtitle">Advanced Machine Learning • Real-time Analysis • Zero-Day Detection</p>
         </div>
 
         <div class="card">
-            <div class="api-config">
-                <label for="apiUrl">API Endpoint:</label>
-                <input type="text" id="apiUrl" value="http://localhost:8000" placeholder="http://localhost:8000">
-            </div>
-
             <div class="input-group">
-                <label for="urlInput">Enter URLs to Check (one per line):</label>
+                <label for="urlInput">
+                    Enter URLs to Analyze
+                    <span class="label-hint">(one per line)</span>
+                </label>
                 <textarea
                     id="urlInput"
-                    rows="8"
-                    placeholder="https://www.google.com&#10;http://suspicious-site.tk&#10;https://www.github.com"
+                    rows="10"
+                    placeholder="https://www.google.com&#10;http://suspicious-phishing-site.tk&#10;https://www.github.com&#10;http://paypal-verify.ml/login&#10;https://www.apple.com"
                 ></textarea>
             </div>
 
             <div class="button-group">
-                <button class="btn-primary" onclick="analyzeUrls()">🔍 Analyze URLs</button>
-                <button class="btn-secondary" onclick="clearResults()">🗑️ Clear</button>
+                <button class="btn-primary" onclick="analyzeUrls()" id="analyzeBtn">
+                    🔍 Analyze URLs
+                </button>
+                <button class="btn-secondary" onclick="clearResults()">
+                    🗑️ Clear All
+                </button>
             </div>
 
             <div id="status" class="status"></div>
@@ -317,9 +393,21 @@
 
             <div id="results" class="results"></div>
         </div>
+
+        <div class="footer">
+            <p>
+                <strong>Keyboard Shortcuts:</strong>
+                <span class="keyboard-hint">Ctrl</span> + <span class="keyboard-hint">Enter</span> to analyze
+            </p>
+            <p class="hint">
+                Powered by Ensemble ML (XGBoost • Random Forest • Neural Network)
+            </p>
+        </div>
     </div>
 
     <script>
+        const API_URL = 'http://localhost:8000';
+
         function showStatus(message, type = 'info') {
             const status = document.getElementById('status');
             status.textContent = message;
@@ -332,7 +420,8 @@
             results.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p style="margin-top: 15px; color: #666;">Analyzing URLs...</p>
+                    <p style="color: #666; font-weight: 500;">Analyzing URLs with ML models...</p>
+                    <p style="color: #999; font-size: 13px; margin-top: 10px;">Extracting 57 features and running ensemble prediction</p>
                 </div>
             `;
         }
@@ -346,27 +435,29 @@
 
         async function analyzeUrls() {
             const input = document.getElementById('urlInput').value.trim();
-            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const analyzeBtn = document.getElementById('analyzeBtn');
 
             if (!input) {
-                showStatus('Please enter at least one URL', 'error');
+                showStatus('⚠️ Please enter at least one URL to analyze', 'error');
                 return;
             }
 
             const urls = input.split('\n').filter(url => url.trim());
 
             if (urls.length === 0) {
-                showStatus('Please enter valid URLs', 'error');
+                showStatus('⚠️ Please enter valid URLs', 'error');
                 return;
             }
 
+            // Disable button during analysis
+            analyzeBtn.disabled = true;
             showLoading();
 
             try {
                 const endpoint = urls.length === 1 ? '/predict' : '/batch_predict';
                 const payload = urls.length === 1 ? { url: urls[0] } : { urls: urls };
 
-                const response = await fetch(`${apiUrl}${endpoint}`, {
+                const response = await fetch(`${API_URL}${endpoint}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -387,12 +478,19 @@
                     displayStats(data);
                 }
 
-                showStatus(`✓ Analysis complete! Checked ${urls.length} URL${urls.length > 1 ? 's' : ''}`, 'info');
+                showStatus(`✅ Analysis complete! Checked ${urls.length} URL${urls.length > 1 ? 's' : ''}`, 'info');
 
             } catch (error) {
                 document.getElementById('results').innerHTML = '';
-                showStatus(`Error: ${error.message}. Make sure the API server is running!`, 'error');
+                let errorMsg = error.message;
+                if (errorMsg.includes('Failed to fetch')) {
+                    errorMsg = 'Cannot connect to API server. Please make sure the server is running on http://localhost:8000';
+                }
+                showStatus(`❌ Error: ${errorMsg}`, 'error');
                 console.error('Error:', error);
+            } finally {
+                // Re-enable button
+                analyzeBtn.disabled = false;
             }
         }
 
@@ -421,7 +519,7 @@
 
             predictions.forEach(result => {
                 const isPhishing = result.is_phishing;
-                const icon = isPhishing ? '🚨' : '✓';
+                const icon = isPhishing ? '🚨' : '✅';
                 const statusClass = isPhishing ? 'phishing' : 'safe';
                 const confidence = (result.confidence * 100).toFixed(1);
                 const riskLevel = result.risk_level.toUpperCase();
@@ -430,14 +528,14 @@
                     <div class="result-item ${statusClass}">
                         <div class="result-header">
                             <span class="result-icon">${icon}</span>
-                            <span class="result-url">${result.url}</span>
+                            <span class="result-url">${escapeHtml(result.url)}</span>
                             <span class="badge ${result.risk_level}">${riskLevel}</span>
                         </div>
                         <div class="result-details">
                             <div class="detail-item">
                                 <div class="detail-label">Status</div>
                                 <div class="detail-value" style="color: ${isPhishing ? '#f44336' : '#4caf50'}">
-                                    ${isPhishing ? 'PHISHING' : 'SAFE'}
+                                    ${isPhishing ? '🚨 PHISHING' : '✅ SAFE'}
                                 </div>
                             </div>
                             <div class="detail-item">
@@ -468,20 +566,23 @@
             });
         }
 
-        // Allow Enter key to submit
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Keyboard shortcuts
         document.getElementById('urlInput').addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
                 analyzeUrls();
             }
         });
 
-        // Load sample URLs on page load (optional)
+        // Focus on textarea on load
         window.addEventListener('load', function() {
-            const sampleUrls = `https://www.google.com
-http://suspicious-site.tk
-https://www.github.com`;
-            // Uncomment to auto-load sample URLs:
-            // document.getElementById('urlInput').value = sampleUrls;
+            document.getElementById('urlInput').focus();
         });
     </script>
 </body>
