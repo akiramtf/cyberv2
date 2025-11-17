@@ -50,8 +50,8 @@ def main():
     print("="*60)
 
     # XGBoost only
-    y_pred_xgb = detector.ensemble_classifier.xgboost_model.predict(X_test)
-    y_proba_xgb = detector.ensemble_classifier.xgboost_model.predict_proba(X_test)[:, 1]
+    y_pred_xgb = detector.ensemble_classifier.xgb_model.predict(X_test)
+    y_proba_xgb = detector.ensemble_classifier.xgb_model.predict_proba(X_test)[:, 1]
 
     print("\n1. XGBoost (40% weight):")
     print(f"   Accuracy:  {accuracy_score(y_test, y_pred_xgb):.4f}")
@@ -61,8 +61,8 @@ def main():
     print(f"   ROC-AUC:   {roc_auc_score(y_test, y_proba_xgb):.4f}")
 
     # Random Forest only
-    y_pred_rf = detector.ensemble_classifier.random_forest_model.predict(X_test)
-    y_proba_rf = detector.ensemble_classifier.random_forest_model.predict_proba(X_test)[:, 1]
+    y_pred_rf = detector.ensemble_classifier.rf_model.predict(X_test)
+    y_proba_rf = detector.ensemble_classifier.rf_model.predict_proba(X_test)[:, 1]
 
     print("\n2. Random Forest (30% weight):")
     print(f"   Accuracy:  {accuracy_score(y_test, y_pred_rf):.4f}")
@@ -72,7 +72,7 @@ def main():
     print(f"   ROC-AUC:   {roc_auc_score(y_test, y_proba_rf):.4f}")
 
     # Neural Network only
-    y_proba_nn = detector.ensemble_classifier.neural_network_model.predict(X_test, verbose=0).flatten()
+    y_proba_nn = detector.ensemble_classifier.nn_model.predict(X_test, verbose=0).flatten()
     y_pred_nn = (y_proba_nn >= 0.5).astype(int)
 
     print("\n3. Neural Network (30% weight):")
