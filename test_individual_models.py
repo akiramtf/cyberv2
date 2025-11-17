@@ -23,22 +23,28 @@ def main():
         return
 
     print("Loading dataset...")
-    df = pd.read_csv('dataset2.csv', on_bad_lines='skip').head(10000)  # Use 10k for speed
+    df = pd.read_csv('dataset2.csv', on_bad_lines='skip').head(2000)  # Use 2k for faster testing
 
     # Extract features
-    print("Extracting features...")
+    print(f"Extracting features from {len(df)} URLs...")
     feature_extractor = FeatureExtractor(enable_dns_lookup=False)
 
     features_list = []
     labels = []
 
-    for _, row in df.iterrows():
+    for idx, row in df.iterrows():
         try:
             features = feature_extractor.extract_features(row['url'])
             features_list.append(features)
             labels.append(int(row['label']))
+
+            # Progress indicator every 500 URLs
+            if (len(features_list) + 1) % 500 == 0:
+                print(f"  Processed {len(features_list)} URLs...")
         except:
             pass
+
+    print(f"  Completed: {len(features_list)} URLs extracted")
 
     X = pd.DataFrame(features_list).values
     y = np.array(labels)
