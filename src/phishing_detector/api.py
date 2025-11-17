@@ -24,8 +24,8 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI app
 app = FastAPI(
     title="CyberV2 - URL Phishing Detector API",
-    description="Advanced ML-based phishing detection with zero-day capabilities",
-    version="1.0.0",
+    description="Advanced ML-based phishing detection using ensemble classification",
+    version="2.0.0",
 )
 
 # CORS middleware
@@ -95,8 +95,6 @@ class PredictionResponse(BaseModel):
     ensemble_score: float  # Raw ML ensemble score (phishing probability)
     risk_level: str
     prediction_source: str
-    zero_day_detected: bool
-    anomaly_score: float
     model_scores: Optional[ModelScores]  # None for whitelisted domains
     timestamp: str
 
@@ -116,7 +114,6 @@ class HealthResponse(BaseModel):
 
     status: str
     model_loaded: bool
-    zero_day_enabled: bool
     timestamp: str
 
 
@@ -125,7 +122,6 @@ class ModelInfoResponse(BaseModel):
 
     model_version: str
     features_count: int
-    zero_day_enabled: bool
     top_features: List[dict]
 
 
@@ -151,9 +147,7 @@ async def startup_event():
         if os.path.exists(os.path.join(model_path, "xgboost_model.json")):
             logger.info(f"Loading model from {model_path}")
             detector = PhishingDetector(
-                enable_zero_day=settings.enable_zero_day_detection,
                 enable_dns_lookup=settings.enable_dns_lookup,
-                anomaly_threshold=settings.anomaly_threshold,
             )
             detector.load(str(model_path))
             logger.info("Model loaded successfully")
@@ -180,7 +174,6 @@ async def health_check():
     return HealthResponse(
         status="healthy" if detector is not None else "model_not_loaded",
         model_loaded=detector is not None,
-        zero_day_enabled=settings.enable_zero_day_detection if detector else False,
         timestamp=datetime.utcnow().isoformat(),
     )
 
@@ -243,7 +236,6 @@ async def model_info(det: PhishingDetector = Depends(get_detector)):
         return ModelInfoResponse(
             model_version=settings.model_version,
             features_count=len(feature_importance),
-            zero_day_enabled=settings.enable_zero_day_detection,
             top_features=top_features,
         )
     except Exception as e:

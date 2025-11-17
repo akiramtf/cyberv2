@@ -832,11 +832,9 @@ def train_model(
     logger.info(f"Test set: {X_test.shape[0]} samples")
     logger.info(f"Phishing ratio in training: {y_train.mean():.2%}")
 
-    # Initialize detector with adjusted settings
+    # Initialize detector
     detector = PhishingDetector(
-        enable_zero_day=True,
         enable_dns_lookup=False,
-        anomaly_threshold=0.5,  # Increased threshold to reduce false positives
         random_state=random_state,
     )
 
