@@ -8,7 +8,7 @@ This guide explains how to test the phishing detection system and collect result
 
 ```bash
 # 1. Train the full model
-python training/train.py --data dataset.csv --output models/trained
+python training/train.py --data dataset2.csv --output models/trained
 
 # 2. Test individual models comparison
 python test_individual_models.py
@@ -25,7 +25,7 @@ python test_ablation_study.py
 
 **Command:**
 ```bash
-python training/train.py --data dataset.csv --output models/trained
+python training/train.py --data dataset2.csv --output models/trained
 ```
 
 **What to collect:**
@@ -95,7 +95,7 @@ Ensemble improvement: +1.44% accuracy over best individual model
 
 **Command:**
 ```bash
-python training/train.py --data dataset.csv --output models/trained
+python training/train.py --data dataset2.csv --output models/trained
 # Check the output for "Top 10 Most Important Features"
 ```
 
@@ -173,16 +173,16 @@ Feature Group Contribution Ranking:
 **Commands:**
 ```bash
 # Small dataset (1k URLs)
-python training/train.py --data dataset.csv --max-rows 1000 --output models/test_1k
+python training/train.py --data dataset2.csv --max-rows 1000 --output models/test_1k
 
 # Medium dataset (10k URLs)
-python training/train.py --data dataset.csv --max-rows 10000 --output models/test_10k
+python training/train.py --data dataset2.csv --max-rows 10000 --output models/test_10k
 
 # Large dataset (25k URLs)
-python training/train.py --data dataset.csv --max-rows 25000 --output models/test_25k
+python training/train.py --data dataset2.csv --max-rows 25000 --output models/test_25k
 
 # Full dataset (49k URLs)
-python training/train.py --data dataset.csv --output models/trained
+python training/train.py --data dataset2.csv --output models/trained
 ```
 
 **What to collect:**
@@ -211,13 +211,13 @@ Observation: Performance plateaus after ~25k samples, suggesting diminishing ret
 **Commands:**
 ```bash
 # 90/10 split
-python training/train.py --data dataset.csv --test-size 0.1 --output models/split_90_10
+python training/train.py --data dataset2.csv --test-size 0.1 --output models/split_90_10
 
 # 80/20 split (default)
-python training/train.py --data dataset.csv --test-size 0.2 --output models/split_80_20
+python training/train.py --data dataset2.csv --test-size 0.2 --output models/split_80_20
 
 # 70/30 split
-python training/train.py --data dataset.csv --test-size 0.3 --output models/split_70_30
+python training/train.py --data dataset2.csv --test-size 0.3 --output models/split_70_30
 ```
 
 **What to collect:**
@@ -246,7 +246,7 @@ After training, manually inspect false positives and false negatives:
 **Command:**
 ```bash
 # Train model
-python training/train.py --data dataset.csv --output models/trained
+python training/train.py --data dataset2.csv --output models/trained
 
 # Then use Python to analyze errors:
 ```
@@ -395,7 +395,7 @@ Accuracy: 94.37% ± 0.12% (95% confidence interval across 5 random seeds)
 **Issue: Training crashes with memory error**
 ```bash
 # Solution: Use smaller dataset
-python training/train.py --data dataset.csv --max-rows 10000
+python training/train.py --data dataset2.csv --max-rows 10000
 ```
 
 **Issue: Neural network not converging**

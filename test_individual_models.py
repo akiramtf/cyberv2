@@ -14,7 +14,7 @@ from src.phishing_detector.features.extractor import FeatureExtractor
 
 def main():
     print("Loading dataset...")
-    df = pd.read_csv('dataset.csv', on_bad_lines='skip').head(10000)  # Use 10k for speed
+    df = pd.read_csv('dataset2.csv', on_bad_lines='skip').head(10000)  # Use 10k for speed
 
     # Extract features
     print("Extracting features...")

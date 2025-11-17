@@ -68,7 +68,7 @@ pip install -r requirements.txt
 
 ```bash
 # Train with your phishing dataset (CSV with 'url' and 'label' columns)
-python training/train.py --data dataset.csv --max-rows 5000
+python training/train.py --data dataset2.csv --max-rows 5000
 
 # The script will:
 # - Extract 57 features from each URL
@@ -154,7 +154,7 @@ curl -X POST "http://localhost:8000/predict" \
 # - label: 0 = legitimate, 1 = phishing
 
 # Train with custom dataset
-python training/train.py --data your_dataset.csv --max-rows 10000
+python training/train.py --data your_dataset2.csv --max-rows 10000
 
 # Optional parameters:
 # --test-size: Test set ratio (default: 0.2)

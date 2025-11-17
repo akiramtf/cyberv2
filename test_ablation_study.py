@@ -18,7 +18,7 @@ def get_feature_indices(feature_names, feature_prefix):
 
 def main():
     print("Loading dataset...")
-    df = pd.read_csv('dataset.csv', on_bad_lines='skip').head(5000)  # 5k for faster testing
+    df = pd.read_csv('dataset2.csv', on_bad_lines='skip').head(5000)  # 5k for faster testing
 
     # Extract features
     print("Extracting features...")
