@@ -1,4 +1,7 @@
-"""Ablation study: Test impact of different feature groups"""
+"""Ablation study: Test impact of different feature groups
+Note: This script trains new models for each feature configuration.
+For quick testing with pre-trained models, use test_individual_models.py instead.
+"""
 
 import sys
 from pathlib import Path

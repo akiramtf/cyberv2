@@ -1,6 +1,7 @@
-"""Test individual model performance vs ensemble"""
+"""Test individual model performance vs ensemble using pre-trained models"""
 
 import sys
+import os
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -13,6 +14,14 @@ from src.phishing_detector.detector import PhishingDetector
 from src.phishing_detector.features.extractor import FeatureExtractor
 
 def main():
+    # Check if trained models exist
+    model_path = 'models/trained'
+    if not os.path.exists(os.path.join(model_path, 'xgboost_model.json')):
+        print(f"Error: No trained models found in {model_path}/")
+        print("Please train models first using:")
+        print("  python training/train.py --data dataset2.csv --output models/trained")
+        return
+
     print("Loading dataset...")
     df = pd.read_csv('dataset2.csv', on_bad_lines='skip').head(10000)  # Use 10k for speed
 
@@ -34,15 +43,15 @@ def main():
     X = pd.DataFrame(features_list).values
     y = np.array(labels)
 
-    # Split data
+    # Split data (use same random state as training for consistency)
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    # Train detector
-    print("\nTraining ensemble detector...")
+    # Load pre-trained detector
+    print(f"\nLoading pre-trained models from {model_path}...")
     detector = PhishingDetector(enable_dns_lookup=False)
-    detector.train(X_train, y_train, X_test, y_test)
+    detector.load(model_path)
 
     # Test individual models
     print("\n" + "="*60)
@@ -105,6 +114,10 @@ def main():
 
     print(f"\nEnsemble improvement over best individual model:")
     print(f"  Accuracy gain: +{acc_improvement:.4f} ({acc_improvement*100:.2f}%)")
+
+    print("\n" + "="*60)
+    print(f"Note: Using pre-trained models from {model_path}/")
+    print("="*60)
 
 if __name__ == "__main__":
     main()
