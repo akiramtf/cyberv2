@@ -319,6 +319,33 @@ def main():
     # Step 5: Test individual models
     print_header("STEP 5: Testing Individual Models")
 
+    # Verify models are different objects
+    print("\n🔍 Model Verification:")
+    print(f"XGBoost model type: {type(detector.ensemble_classifier.xgb_model)}")
+    print(f"XGBoost model ID: {id(detector.ensemble_classifier.xgb_model)}")
+    print(f"Random Forest model type: {type(detector.ensemble_classifier.rf_model)}")
+    print(f"Random Forest model ID: {id(detector.ensemble_classifier.rf_model)}")
+    print(f"Neural Network model type: {type(detector.ensemble_classifier.nn_model)}")
+    print(f"Neural Network model ID: {id(detector.ensemble_classifier.nn_model)}")
+
+    if id(detector.ensemble_classifier.xgb_model) == id(detector.ensemble_classifier.rf_model):
+        print("⚠️  WARNING: XGBoost and Random Forest are THE SAME OBJECT!")
+    else:
+        print("✅ Models are different objects")
+
+    # Test first 5 URLs to verify different predictions
+    print("\n🧪 Testing first 5 URLs to verify models differ:")
+    test_sample = X_test_scaled[:5]
+    xgb_test_pred = detector.ensemble_classifier.xgb_model.predict(test_sample)
+    rf_test_pred = detector.ensemble_classifier.rf_model.predict(test_sample)
+    print(f"XGBoost predictions: {xgb_test_pred}")
+    print(f"Random Forest predictions: {rf_test_pred}")
+    if np.array_equal(xgb_test_pred, rf_test_pred):
+        print("⚠️  WARNING: Predictions are IDENTICAL for first 5 samples!")
+    else:
+        print("✅ Predictions differ between models")
+    print()
+
     results = []
     individual_probas = {}
 
