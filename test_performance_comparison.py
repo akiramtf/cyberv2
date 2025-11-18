@@ -291,12 +291,14 @@ def main():
 
     print(f"\n✅ Feature extraction complete: {len(features_list):,} valid URLs")
 
-    # Create feature matrix
-    X_test = np.array(features_list)
+    # Create feature matrix (convert list of dicts to 2D array)
+    df_features = pd.DataFrame(features_list)
+    X_test = df_features.values
     y_test = y_test[valid_indices]
 
     print(f"Feature matrix shape: {X_test.shape}")
     print(f"Labels shape: {y_test.shape}")
+    print(f"Number of features: {X_test.shape[1]}")
 
     # Scale features
     X_test_scaled = detector.ensemble_classifier.scaler.transform(X_test)
