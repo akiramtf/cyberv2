@@ -11,9 +11,10 @@ import dns.exception
 class HostFeatures:
     """Extract host-based features from URLs"""
 
-    def __init__(self, enable_dns: bool = True, enable_whois: bool = False, timeout: int = 5):
+    def __init__(self, enable_dns: bool = True, enable_whois: bool = False, enable_ssl: bool = True, timeout: int = 5):
         self.enable_dns = enable_dns
         self.enable_whois = enable_whois
+        self.enable_ssl = enable_ssl
         self.timeout = timeout
         self.dns_resolver = dns.resolver.Resolver()
         self.dns_resolver.timeout = timeout
@@ -35,7 +36,7 @@ class HostFeatures:
             features.update(self._get_default_dns_features())
 
         # SSL/TLS features
-        if components.get("scheme") == "https":
+        if self.enable_ssl and components.get("scheme") == "https":
             ssl_features = self._extract_ssl_features(hostname, components.get("port", 443))
             features.update(ssl_features)
         else:

@@ -706,6 +706,7 @@ def extract_features_from_urls(urls: list, labels: list) -> tuple:
     feature_extractor = FeatureExtractor(
         enable_dns_lookup=False,  # Disable for faster training
         enable_whois_lookup=False,
+        enable_ssl_check=False,  # Disable SSL checks for faster training (avoid network timeouts)
         timeout=5,
     )
 
@@ -835,6 +836,7 @@ def train_model(
     # Initialize detector
     detector = PhishingDetector(
         enable_dns_lookup=False,
+        enable_ssl_check=False,  # Disable SSL checks for faster training
         random_state=random_state,
     )
 

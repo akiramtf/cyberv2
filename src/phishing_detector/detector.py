@@ -19,6 +19,7 @@ class PhishingDetector:
     def __init__(
         self,
         enable_dns_lookup: bool = True,
+        enable_ssl_check: bool = True,
         random_state: int = 42,
     ):
         """
@@ -26,12 +27,14 @@ class PhishingDetector:
 
         Args:
             enable_dns_lookup: Enable DNS lookups for host features
+            enable_ssl_check: Enable SSL certificate checks (disable for faster training)
             random_state: Random seed for reproducibility
         """
         # Initialize feature extractor
         self.feature_extractor = FeatureExtractor(
             enable_dns_lookup=enable_dns_lookup,
             enable_whois_lookup=False,
+            enable_ssl_check=enable_ssl_check,
             timeout=5,
         )
 

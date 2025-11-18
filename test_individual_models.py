@@ -56,7 +56,7 @@ def main():
 
     # Load pre-trained detector
     print(f"\nLoading pre-trained models from {model_path}...")
-    detector = PhishingDetector(enable_dns_lookup=False)
+    detector = PhishingDetector(enable_dns_lookup=False, enable_ssl_check=False)
     detector.load(model_path)
 
     # Test individual models

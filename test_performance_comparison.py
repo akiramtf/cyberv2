@@ -254,7 +254,7 @@ def main():
     print_header("STEP 3: Loading Pre-trained Models")
     print(f"Loading models from: {MODEL_PATH}/")
 
-    detector = PhishingDetector(enable_dns_lookup=False, random_state=RANDOM_STATE)
+    detector = PhishingDetector(enable_dns_lookup=False, enable_ssl_check=False, random_state=RANDOM_STATE)
 
     try:
         detector.load(MODEL_PATH)

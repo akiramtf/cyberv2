@@ -1,5 +1,9 @@
 # Dataset Training Time Analysis
 
+> **✅ UPDATE:** Option 3 (Disable SSL Checks) has been **IMPLEMENTED**!
+> See [SSL_CHECK_TOGGLE_IMPLEMENTATION.md](SSL_CHECK_TOGGLE_IMPLEMENTATION.md) for details.
+> Training script now automatically uses `enable_ssl_check=False` for 40-80x speedup.
+
 ## Problem Summary
 
 **Issue:** Training with dataset4.csv takes hours while dataset3.csv takes minutes, despite having similar row counts.

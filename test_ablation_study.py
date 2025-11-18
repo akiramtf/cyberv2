@@ -60,7 +60,7 @@ def main():
 
     # Baseline: All features (57 features)
     print("\n1. BASELINE - All 57 Features:")
-    detector_full = PhishingDetector(enable_dns_lookup=False)
+    detector_full = PhishingDetector(enable_dns_lookup=False, enable_ssl_check=False)
     detector_full.train(X_train, y_train)
     y_pred_full = (detector_full.ensemble_classifier.predict_proba(X_test) >= 0.5).astype(int)
 
@@ -93,7 +93,7 @@ def main():
     X_train_lex = X_train[:, lexical_idx]
     X_test_lex = X_test[:, lexical_idx]
 
-    detector_lex = PhishingDetector(enable_dns_lookup=False)
+    detector_lex = PhishingDetector(enable_dns_lookup=False, enable_ssl_check=False)
     detector_lex.train(X_train_lex, y_train)
     y_pred_lex = (detector_lex.ensemble_classifier.predict_proba(X_test_lex) >= 0.5).astype(int)
 
@@ -113,7 +113,7 @@ def main():
     X_train_no_ssl = X_train[:, no_ssl_idx]
     X_test_no_ssl = X_test[:, no_ssl_idx]
 
-    detector_no_ssl = PhishingDetector(enable_dns_lookup=False)
+    detector_no_ssl = PhishingDetector(enable_dns_lookup=False, enable_ssl_check=False)
     detector_no_ssl.train(X_train_no_ssl, y_train)
     y_pred_no_ssl = (detector_no_ssl.ensemble_classifier.predict_proba(X_test_no_ssl) >= 0.5).astype(int)
 
@@ -134,7 +134,7 @@ def main():
     X_train_no_dns = X_train[:, no_dns_idx]
     X_test_no_dns = X_test[:, no_dns_idx]
 
-    detector_no_dns = PhishingDetector(enable_dns_lookup=False)
+    detector_no_dns = PhishingDetector(enable_dns_lookup=False, enable_ssl_check=False)
     detector_no_dns.train(X_train_no_dns, y_train)
     y_pred_no_dns = (detector_no_dns.ensemble_classifier.predict_proba(X_test_no_dns) >= 0.5).astype(int)
 
