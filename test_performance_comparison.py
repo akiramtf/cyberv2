@@ -98,9 +98,22 @@ def test_individual_model(model, X_test, y_test, model_name):
     """Test an individual model and return predictions"""
     print(f"\n[Testing {model_name}...]")
 
-    # Get predictions
-    y_pred = model.predict(X_test)
-    y_pred_proba = model.predict_proba(X_test)[:, 1]
+    # Check if model is a Keras/TensorFlow model
+    try:
+        from tensorflow import keras
+        is_keras = isinstance(model, keras.Model)
+    except:
+        is_keras = False
+
+    # Get predictions based on model type
+    if is_keras:
+        # Keras models use .predict() which returns probabilities directly
+        y_pred_proba = model.predict(X_test).flatten()  # Shape: (n_samples,)
+        y_pred = (y_pred_proba >= 0.5).astype(int)
+    else:
+        # Sklearn models (XGBoost, Random Forest)
+        y_pred = model.predict(X_test)
+        y_pred_proba = model.predict_proba(X_test)[:, 1]
 
     # Print metrics
     metrics = print_metrics(model_name, y_test, y_pred, y_pred_proba)
