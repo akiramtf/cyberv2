@@ -14,6 +14,7 @@ class FeatureExtractor:
     def __init__(
         self,
         enable_dns_lookup: bool = True,
+        enable_ssl_lookup: bool = True,
         enable_whois_lookup: bool = False,
         timeout: int = 5,
     ):
@@ -21,6 +22,7 @@ class FeatureExtractor:
         self.lexical_extractor = LexicalFeatures()
         self.host_extractor = HostFeatures(
             enable_dns=enable_dns_lookup,
+            enable_ssl=enable_ssl_lookup,
             enable_whois=enable_whois_lookup,
             timeout=timeout,
         )

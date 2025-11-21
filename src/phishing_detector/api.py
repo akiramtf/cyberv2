@@ -54,6 +54,10 @@ class URLRequest(BaseModel):
         if not v.startswith(("http://", "https://", "ftp://")):
             v = "http://" + v
 
+        # Allow localhost and private IPs for testing
+        if "localhost" in v or "127.0.0.1" in v:
+            return v
+
         if not validators.url(v):
             raise ValueError("Invalid URL format")
         return v
@@ -73,17 +77,18 @@ class BatchURLRequest(BaseModel):
             if not url.startswith(("http://", "https://", "ftp://")):
                 url = "http://" + url
 
+            # Allow localhost and private IPs for testing
+            if "localhost" in url or "127.0.0.1" in url:
+                validated_urls.append(url)
+                continue
+
             if not validators.url(url):
                 raise ValueError(f"Invalid URL format: {url}")
             validated_urls.append(url)
         return validated_urls
 
 
-class ModelScores(BaseModel):
-    """Individual model scores"""
-    xgboost_score: float
-    random_forest_score: float
-    neural_network_score: float
+
 
 
 class PredictionResponse(BaseModel):
@@ -92,10 +97,9 @@ class PredictionResponse(BaseModel):
     url: str
     is_phishing: bool
     confidence: float
-    ensemble_score: float  # Raw ML ensemble score (phishing probability)
+    phishing_score: float
     risk_level: str
     prediction_source: str
-    model_scores: Optional[ModelScores]  # None for whitelisted domains
     timestamp: str
 
 

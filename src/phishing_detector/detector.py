@@ -1,14 +1,16 @@
-"""Main phishing detector using ensemble classification"""
+"""Main phishing detector using XGBoost classification"""
 
 import os
 from typing import Dict, List, Optional, Tuple
 import numpy as np
 import logging
+import warnings
+
+# Suppress urllib3 SSL warning
+warnings.filterwarnings("ignore", category=UserWarning, module="urllib3")
 
 from .features.extractor import FeatureExtractor
-from .models.ensemble_classifier import EnsembleClassifier
-from .legitimate_domains import LEGITIMATE_DOMAINS
-import tldextract
+from .models.phishing_model import PhishingModel
 
 logger = logging.getLogger(__name__)
 
@@ -31,12 +33,13 @@ class PhishingDetector:
         # Initialize feature extractor
         self.feature_extractor = FeatureExtractor(
             enable_dns_lookup=enable_dns_lookup,
+            enable_ssl_lookup=enable_dns_lookup,  # Couple SSL with DNS for now
             enable_whois_lookup=False,
             timeout=5,
         )
 
-        # Initialize ensemble classifier
-        self.ensemble_classifier = EnsembleClassifier(random_state=random_state)
+        # Initialize model
+        self.model = PhishingModel(random_state=random_state)
 
         self.is_trained = False
 
@@ -53,49 +56,28 @@ class PhishingDetector:
         if not self.is_trained:
             raise ValueError("Detector must be trained before prediction")
 
-        # Check domain whitelist first (domain-based classification)
-        # Extract domain (SLD + TLD) from URL using tldextract
-        extracted = tldextract.extract(url)
-        domain = f"{extracted.domain}.{extracted.suffix}".lower()  # e.g., "google.com"
 
-        # If domain is in whitelist, immediately return SAFE
-        if domain in LEGITIMATE_DOMAINS:
-            return {
-                "url": url,
-                "is_phishing": False,
-                "confidence": 0.99,  # Very high confidence for known legitimate domains
-                "ensemble_score": 0.0,  # No ML ensemble used for whitelisted domains
-                "prediction_source": "domain_whitelist",
-                "risk_level": "safe",
-                "model_scores": None,  # No ML models used for whitelisted domains
-            }
 
         # Extract features
         features = self.feature_extractor.extract_features(url)
         feature_values = np.array([list(features.values())])
 
-        # Get ensemble prediction
-        ensemble_proba = self.ensemble_classifier.predict_proba(feature_values)[0]
-        ensemble_prediction = int(ensemble_proba >= 0.5)
+        # Get prediction
+        phishing_proba = self.model.predict_proba(feature_values)[0]
+        is_phishing = int(phishing_proba >= 0.5)
 
-        # Get individual model scores
-        individual_scores = self.ensemble_classifier.get_individual_predictions(feature_values)
-
-        # Calculate confidence: for safe URLs, invert the probability
-        # This makes confidence represent "how confident we are in the prediction"
-        # rather than "probability of phishing"
-        if ensemble_prediction == 1:  # Phishing
-            confidence = ensemble_proba
-        else:  # Safe
-            confidence = 1.0 - ensemble_proba
+        # Calculate confidence
+        if is_phishing == 1:
+            confidence = phishing_proba
+        else:
+            confidence = 1.0 - phishing_proba
 
         result = {
             "url": url,
-            "is_phishing": bool(ensemble_prediction),
+            "is_phishing": bool(is_phishing),
             "confidence": float(confidence),
-            "ensemble_score": float(ensemble_proba),  # Raw ML ensemble score (phishing probability)
-            "prediction_source": "ensemble",
-            "model_scores": individual_scores,  # Add individual model scores
+            "phishing_score": float(phishing_proba),
+            "prediction_source": "model",
         }
 
         # Risk level based on confidence
@@ -153,7 +135,7 @@ class PhishingDetector:
         X_val: Optional[np.ndarray] = None,
         y_val: Optional[np.ndarray] = None,
         feature_names: Optional[List[str]] = None,
-    ) -> Dict[str, any]:
+    ) -> None:
         """
         Train the detector
 
@@ -163,39 +145,34 @@ class PhishingDetector:
             X_val: Validation features
             y_val: Validation labels
             feature_names: List of feature names
-
-        Returns:
-            Training history
         """
         logger.info("Training phishing detector...")
 
-        # Train ensemble classifier
-        history = self.ensemble_classifier.train(
+        # Train model
+        self.model.train(
             X_train, y_train, X_val, y_val, feature_names
         )
 
         self.is_trained = True
         logger.info("Phishing detector trained successfully")
 
-        return history
-
     def save(self, directory: str) -> None:
         """Save all models"""
         os.makedirs(directory, exist_ok=True)
 
-        # Save ensemble classifier
-        self.ensemble_classifier.save(directory)
+        # Save model
+        self.model.save(directory)
 
         logger.info(f"Phishing detector saved to {directory}")
 
     def load(self, directory: str) -> None:
         """Load all models"""
-        # Load ensemble classifier
-        self.ensemble_classifier.load(directory)
+        # Load model
+        self.model.load(directory)
 
         self.is_trained = True
         logger.info(f"Phishing detector loaded from {directory}")
 
     def get_feature_importance(self) -> Dict[str, float]:
-        """Get feature importance from ensemble models"""
-        return self.ensemble_classifier.get_feature_importance()
+        """Get feature importance"""
+        return self.model.get_feature_importance()

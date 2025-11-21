@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,7 +33,7 @@
         .header h1 {
             font-size: 3em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .header p {
@@ -50,7 +51,7 @@
             background: white;
             border-radius: 15px;
             padding: 35px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
         }
 
@@ -165,6 +166,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -190,6 +192,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -197,7 +200,7 @@
         }
 
         .result-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
         }
 
@@ -269,11 +272,30 @@
             letter-spacing: 0.5px;
         }
 
-        .badge.critical { background: #f44336; color: white; }
-        .badge.high { background: #ff9800; color: white; }
-        .badge.medium { background: #ffc107; color: #333; }
-        .badge.low { background: #8bc34a; color: white; }
-        .badge.safe { background: #4caf50; color: white; }
+        .badge.critical {
+            background: #f44336;
+            color: white;
+        }
+
+        .badge.high {
+            background: #ff9800;
+            color: white;
+        }
+
+        .badge.medium {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge.low {
+            background: #8bc34a;
+            color: white;
+        }
+
+        .badge.safe {
+            background: #4caf50;
+            color: white;
+        }
 
         .loading {
             text-align: center;
@@ -291,8 +313,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .stats {
@@ -357,11 +384,12 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             <h1>🛡️ Zero-day Phishing Detector</h1>
-            <p class="subtitle">Advanced Machine Learning • Real-time Analysis</p>
+            <p class="subtitle">XGBoost ML Model • Real-time Analysis</p>
         </div>
 
         <div class="card">
@@ -370,11 +398,8 @@
                     Enter URLs to Analyze
                     <span class="label-hint">(one per line)</span>
                 </label>
-                <textarea
-                    id="urlInput"
-                    rows="10"
-                    placeholder="https://www.google.com&#10;http://suspicious-phishing-site.tk&#10;https://www.github.com&#10;http://paypal-verify.ml/login&#10;https://www.apple.com"
-                ></textarea>
+                <textarea id="urlInput" rows="10"
+                    placeholder="https://www.google.com&#10;http://suspicious-phishing-site.tk&#10;https://www.github.com&#10;http://paypal-verify.ml/login&#10;https://www.apple.com"></textarea>
             </div>
 
             <div class="button-group">
@@ -399,7 +424,7 @@
                 <span class="keyboard-hint">Ctrl</span> + <span class="keyboard-hint">Enter</span> to analyze
             </p>
             <p class="hint">
-                Powered by Ensemble ML (XGBoost • Random Forest • Neural Network)
+                Powered by XGBoost ML • 57 Features • Trained on 100K+ URLs
             </p>
         </div>
     </div>
@@ -419,8 +444,8 @@
             results.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p style="color: #666; font-weight: 500;">Analyzing URLs with ML models...</p>
-                    <p style="color: #999; font-size: 13px; margin-top: 10px;">Extracting 57 features and running ensemble prediction</p>
+                    <p style="color: #666; font-weight: 500;">Analyzing URLs with XGBoost ML model...</p>
+                    <p style="color: #999; font-size: 13px; margin-top: 10px;">Extracting 57 features and running prediction</p>
                 </div>
             `;
         }
@@ -441,7 +466,9 @@
                 return;
             }
 
-            const urls = input.split('\n').filter(url => url.trim());
+            const urls = input.split('\n')
+                .map(url => url.trim())
+                .filter(url => url.length > 0);
 
             if (urls.length === 0) {
                 showStatus('⚠️ Please enter valid URLs', 'error');
@@ -541,13 +568,6 @@
                                 <div class="detail-label">Confidence</div>
                                 <div class="detail-value">${confidence}%</div>
                             </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Detection Method</div>
-                                <div class="detail-value">${
-                                    result.prediction_source === 'domain_whitelist' ? 'Domain Whitelist ✓' :
-                                    result.prediction_source === 'ensemble' ? 'ML Ensemble' : 'Zero-Day'
-                                }</div>
-                            </div>
                         </div>
                     </div>
                 `;
@@ -563,7 +583,7 @@
         }
 
         // Keyboard shortcuts
-        document.getElementById('urlInput').addEventListener('keydown', function(e) {
+        document.getElementById('urlInput').addEventListener('keydown', function (e) {
             if (e.ctrlKey && e.key === 'Enter') {
                 e.preventDefault();
                 analyzeUrls();
@@ -571,9 +591,10 @@
         });
 
         // Focus on textarea on load
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             document.getElementById('urlInput').focus();
         });
     </script>
 </body>
+
 </html>

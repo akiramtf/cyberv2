@@ -11,8 +11,9 @@ import dns.exception
 class HostFeatures:
     """Extract host-based features from URLs"""
 
-    def __init__(self, enable_dns: bool = True, enable_whois: bool = False, timeout: int = 5):
+    def __init__(self, enable_dns: bool = True, enable_ssl: bool = True, enable_whois: bool = False, timeout: int = 5):
         self.enable_dns = enable_dns
+        self.enable_ssl = enable_ssl
         self.enable_whois = enable_whois
         self.timeout = timeout
         self.dns_resolver = dns.resolver.Resolver()
@@ -35,8 +36,9 @@ class HostFeatures:
             features.update(self._get_default_dns_features())
 
         # SSL/TLS features
-        if components.get("scheme") == "https":
-            ssl_features = self._extract_ssl_features(hostname, components.get("port", 443))
+        if self.enable_ssl and components.get("scheme") == "https":
+            port = components.get("port") or 443  # Handle None case
+            ssl_features = self._extract_ssl_features(hostname, port)
             features.update(ssl_features)
         else:
             features.update(self._get_default_ssl_features())
@@ -163,7 +165,10 @@ class HostFeatures:
             ssl.SSLError,
             ConnectionRefusedError,
             OSError,
-        ):
+        ) as e:
+            # Log the error for debugging
+            import logging
+            logging.debug(f"SSL extraction failed for {hostname}:{port} - {type(e).__name__}: {e}")
             features.update(self._get_default_ssl_features())
 
         return features
