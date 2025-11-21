@@ -8,7 +8,7 @@ import sys
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
-def create_balanced_dataset(input_file="dataset4.csv", output_file="evaluation_test_data.csv", samples_per_class=1000):
+def create_balanced_dataset(input_file="dataset5.csv", output_file="evaluation_test_data.csv", samples_per_class=1000):
     """Select equal number of samples for each label"""
     
     logger.info(f"Reading {input_file}...")
