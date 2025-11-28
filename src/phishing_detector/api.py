@@ -96,7 +96,6 @@ class PredictionResponse(BaseModel):
 
     url: str
     is_phishing: bool
-    confidence: float
     phishing_score: float
     risk_level: str
     prediction_source: str
@@ -148,15 +147,46 @@ async def startup_event():
 
     try:
         model_path = settings.models_dir
-        if os.path.exists(os.path.join(model_path, "xgboost_model.json")):
-            logger.info(f"Loading model from {model_path}")
-            detector = PhishingDetector(
-                enable_dns_lookup=settings.enable_dns_lookup,
-            )
-            detector.load(str(model_path))
-            logger.info("Model loaded successfully")
+        model_type = os.environ.get("PHISHING_MODEL_TYPE", "hybrid")
+        
+        logger.info(f"Initializing {model_type} model from {model_path}")
+        
+        detector = PhishingDetector(
+            model_type=model_type,
+            enable_dns_lookup=settings.enable_dns_lookup,
+        )
+        
+        # Check if model files exist before loading
+        if model_type == "hybrid":
+            # Check for hybrid model files
+            # 1. In models_dir (e.g. models/trained)
+            path1 = os.path.join(model_path, "hybrid_model.keras")
+            # 2. In models_dir/hybrid_v1
+            path2 = os.path.join(model_path, "hybrid_v1", "hybrid_model.keras")
+            # 3. In project_root/models/hybrid_v1 (Fallback)
+            path3 = os.path.join(settings.project_root, "models", "hybrid_v1", "hybrid_model.keras")
+            
+            if os.path.exists(path1):
+                detector.load(str(model_path))
+                logger.info(f"{model_type.capitalize()} model loaded successfully from {model_path}")
+            elif os.path.exists(path2):
+                detector.load(str(model_path))
+                logger.info(f"{model_type.capitalize()} model loaded successfully from {model_path}")
+            elif os.path.exists(path3):
+                # Load from the specific directory found
+                load_dir = os.path.dirname(path3)
+                detector.load(load_dir)
+                logger.info(f"{model_type.capitalize()} model loaded successfully from {load_dir}")
+            else:
+                logger.warning(f"No trained {model_type} model found. Checked: {path1}, {path2}, {path3}")
         else:
-            logger.warning("No trained model found. Please train the model first.")
+            # Check for xgboost model file
+            if os.path.exists(os.path.join(model_path, "xgboost_model.json")):
+                detector.load(str(model_path))
+                logger.info(f"{model_type.capitalize()} model loaded successfully")
+            else:
+                logger.warning(f"No trained {model_type} model found at {model_path}. Please train it first.")
+                
     except Exception as e:
         logger.error(f"Failed to load model: {e}")
 

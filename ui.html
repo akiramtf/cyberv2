@@ -636,7 +636,7 @@
                 const isPhishing = result.is_phishing;
                 const icon = isPhishing ? '🚨' : '🛡️';
                 const statusClass = isPhishing ? 'phishing' : 'safe';
-                const confidence = (result.confidence * 100).toFixed(1);
+
                 const riskLevel = result.risk_level.toUpperCase();
 
                 const resultHtml = `
@@ -658,8 +658,6 @@
                                 </span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Confidence</span>
-                                <span class="detail-value">${confidence}%</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Score</span>

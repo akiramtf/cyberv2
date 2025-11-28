@@ -127,13 +127,13 @@ def evaluate_custom_file(file_path: str):
     print("\n" + "=" * 60)
     print("DETAILED EVALUATION RESULTS")
     print("=" * 60)
-    print(f"Accuracy:            {accuracy:.4%}")
-    print(f"Precision:           {precision:.4%}")
-    print(f"Recall (Sensitivity):{recall:.4%}")
+    print(f"Accuracy:            {accuracy:.4f}")
+    print(f"Precision:           {precision:.4f}")
+    print(f"Recall (Sensitivity):{recall:.4f}")
     print(f"F1-Score:            {f1:.4f}")
     print(f"ROC-AUC:             {roc_auc:.4f}")
     print("-" * 30)
-    print(f"False Positive Rate: {fpr:.4%} (LOWER IS BETTER)")
+    print(f"False Positive Rate: {fpr:.4f} (LOWER IS BETTER)")
     print("-" * 30)
     print("\nConfusion Matrix:")
     print(f"True Negatives (Safe correctly identified):      {tn}")
@@ -167,7 +167,7 @@ def evaluate_custom_file(file_path: str):
         fps = df_errors[df_errors["error_type"] == "False Positive"].head(5)
         if not fps.empty:
             for _, row in fps.iterrows():
-                print(f"   - {row['url']} (Conf: {row['confidence']:.2f})")
+                print(f"   - {row['url']} (Score: {row['confidence']:.2f})")
         else:
             print("   None")
 
