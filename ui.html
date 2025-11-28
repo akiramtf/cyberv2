@@ -514,7 +514,7 @@
                     class="keyboard-hint">Enter</span> to analyze instantly
             </p>
             <p style="margin-top: 0.5rem; opacity: 0.7;">
-                Powered by XGBoost • 57 Features
+                Powered by Hybrid Deep Learning • 57 Features
             </p>
         </div>
     </div>
@@ -662,6 +662,10 @@
                             <div class="detail-item">
                                 <span class="detail-label">Score</span>
                                 <span class="detail-value">${result.phishing_score.toFixed(3)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Source</span>
+                                <span class="detail-value" style="text-transform: capitalize;">${result.prediction_source}</span>
                             </div>
                         </div>
                     </div>
