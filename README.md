@@ -24,7 +24,8 @@ Our system employs a dual-branch neural network architecture that processes the 
 
 ```mermaid
 graph TD
-    URL["Input URL"]
+    URL["Input URL"] --> FE
+    URL --> Tok
 
     subgraph "Branch A: Feature Engineering (MLP)"
     FE["Extract 57 Features"] --> Scale["Standard Scaler"]
