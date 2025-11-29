@@ -2,6 +2,8 @@
 
 A state-of-the-art phishing detection system powered by a **Hybrid Deep Learning Architecture**. This model fuses a **Convolutional Neural Network (CNN)** for raw text analysis with a **Multi-Layer Perceptron (MLP)** for engineered feature processing, achieving **99.23% accuracy** and a near-zero false positive rate.
 
+---
+
 ## 🚀 Key Features
 
 - **Hybrid Deep Learning Model**: Combines CNN (text patterns) + MLP (statistical features).
@@ -12,27 +14,75 @@ A state-of-the-art phishing detection system powered by a **Hybrid Deep Learning
 - **Production Ready**: FastAPI-based REST API with real-time inference.
 - **Web UI**: Clean, modern interface for testing URLs.
 
-## 📊 Architecture
+---
 
-The system uses a dual-branch neural network to analyze URLs from two perspectives:
+## 📊 Proposed System Model
+
+Our system employs a dual-branch neural network architecture that processes the URL from two distinct perspectives before fusing the information for a final decision.
+
+### System Architecture
 
 ```mermaid
 graph TD
     URL["Input URL"]
-    
-    subgraph "Hybrid Model"
-    URL --> Text["Text Analysis (CNN)"]
-    URL --> Feat["Feature Analysis (MLP)"]
-    Text --> Fusion["Fusion Layer"]
-    Feat --> Fusion
-    Fusion --> Decision["Final Decision"]
+
+    subgraph "Branch A: Feature Engineering (MLP)"
+    FE[Extract 57 Features] --> Scale[Standard Scaler]
+    Scale --> D1[Dense Layer (64 units)]
+    D1 --> D2[Dense Layer (32 units)]
     end
-    
-    Decision --> Output["Phishing Score (0-1)"]
+
+    subgraph "Branch B: Text Analysis (CNN)"
+    Tok[Tokenize URL String] --> Emb[Embedding Layer]
+    Emb --> CNN1[Conv1D (64 filters)]
+    CNN1 --> Pool[MaxPooling]
+    Pool --> CNN2[Conv1D (128 filters)]
+    CNN2 --> GlobalPool[GlobalMaxPooling]
+    GlobalPool --> D3[Dense Layer (32 units)]
+    end
+
+    D2 --> Concat[Concatenate / Fusion]
+    D3 --> Concat
+
+    Concat --> Final1[Dense Layer (64 units)]
+    Final1 --> Dropout[Dropout (0.4)]
+    Dropout --> Final2[Dense Layer (32 units)]
+    Final2 --> Out[Output Node (Sigmoid)]
 ```
 
-1.  **Text Analysis (CNN)**: Scans the raw URL string for suspicious keyword sequences and brand impersonation patterns.
-2.  **Feature Analysis (MLP)**: Analyzes 57 engineered features (Lexical + Host-based) for statistical anomalies.
+### Feature Breakdown (57 Features)
+
+The model utilizes **57 carefully engineered features** to capture both structural and infrastructure-based anomalies:
+
+#### 1. Lexical Features (40)
+Derived directly from the URL string:
+- **Length**: URL length, hostname length, path length, query length.
+- **Counts**: Dots, hyphens, underscores, slashes, special chars (@, &, %, =, ?).
+- **Entropy**: Randomness of URL, hostname, and path (detects DGAs).
+- **Ratios**: Digit/letter ratio, vowel/consonant ratio, case ratios.
+- **Patterns**: IP address usage, "https" token, suspicious TLDs, double slashes.
+
+#### 2. Host-based Features (17)
+Derived from external network queries:
+- **DNS**: A, MX, NS, TXT, PTR record existence and counts.
+- **SSL/TLS**: Certificate validity, age, time-to-expiry, issuer info.
+- **Network**: Standard vs. non-standard port usage.
+
+---
+
+## 📈 Performance
+
+The Hybrid Deep Learning model delivers state-of-the-art results, significantly outperforming traditional machine learning approaches.
+
+| Metric | Performance |
+| :--- | :--- |
+| **Accuracy** | **99.23%** |
+| **Precision** | **99.46%** |
+| **Recall** | **99.00%** |
+| **F1-Score** | **0.9923** |
+| **False Positive Rate** | **0.54%** |
+
+---
 
 ## 🔧 Quick Start
 
@@ -68,11 +118,6 @@ Evaluate the model's performance on a test dataset:
 python evaluate_hybrid.py evaluation_test_data.csv
 ```
 
-**Typical Output:**
-- **Accuracy**: >99%
-- **False Positive Rate**: <0.6%
-- **Precision/Recall**: >99%
-
 ### 4. Start API Server
 
 Start the REST API (loads Hybrid model by default):
@@ -87,6 +132,8 @@ The API will be available at `http://localhost:8000`.
 
 Open `ui.html` in your browser to test URLs through the web interface.
 
+---
+
 ## 🌐 API Endpoints
 
 | Endpoint | Method | Description |
@@ -95,38 +142,14 @@ Open `ui.html` in your browser to test URLs through the web interface.
 | `/batch_predict` | POST | Predict multiple URLs |
 | `/health` | GET | Health check |
 
-### Example Request
-
+**Example Request:**
 ```bash
 curl -X POST "http://localhost:8000/predict" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://suspicious-login.com"}'
 ```
 
-**Response:**
-```json
-{
-  "url": "https://suspicious-login.com",
-  "is_phishing": true,
-  "phishing_score": 0.9998,
-  "risk_level": "very_high",
-  "prediction_source": "hybrid"
-}
-```
-
-## 📈 Performance
-
-The Hybrid Deep Learning model delivers state-of-the-art results:
-
-| Metric | Performance |
-| :--- | :--- |
-| **Accuracy** | **99.23%** |
-| **Precision** | **99.46%** |
-| **Recall** | **99.00%** |
-| **False Positive Rate** | **0.54%** |
-
-**Why Hybrid?**
-By combining text analysis with feature engineering, the model can detect sophisticated phishing attacks that might look statistically "normal" (evading feature-based models) or use obscure keywords (evading simple text models).
+---
 
 ## 📁 Project Structure
 
@@ -136,9 +159,15 @@ url_phishing_detector/
 ├── train_hybrid_model.py            # Hybrid Training Script
 ├── evaluate_hybrid.py               # Hybrid Evaluation Script
 ├── ui.html                          # Web Interface
+├── PROPOSED_SCHEME.md               # Detailed System Specification
+├── REPORT.md                        # Final Project Report
 ├── src/phishing_detector/
 │   ├── api.py                       # API Logic
 │   ├── detector.py                  # Main Detector Class
+│   ├── features/
+│   │   ├── extractor.py             # Feature Extractor Orchestrator
+│   │   ├── lexical.py               # Lexical Feature Logic
+│   │   └── host_features.py         # Host/Network Feature Logic
 │   ├── models/
 │   │   └── hybrid_model.py          # Hybrid Architecture (CNN+MLP)
 │   └── utils/
