@@ -27,27 +27,27 @@ graph TD
     URL["Input URL"]
 
     subgraph "Branch A: Feature Engineering (MLP)"
-    FE[Extract 57 Features] --> Scale[Standard Scaler]
-    Scale --> D1[Dense Layer (64 units)]
-    D1 --> D2[Dense Layer (32 units)]
+    FE["Extract 57 Features"] --> Scale["Standard Scaler"]
+    Scale --> D1["Dense Layer (64 units)"]
+    D1 --> D2["Dense Layer (32 units)"]
     end
 
     subgraph "Branch B: Text Analysis (CNN)"
-    Tok[Tokenize URL String] --> Emb[Embedding Layer]
-    Emb --> CNN1[Conv1D (64 filters)]
-    CNN1 --> Pool[MaxPooling]
-    Pool --> CNN2[Conv1D (128 filters)]
-    CNN2 --> GlobalPool[GlobalMaxPooling]
-    GlobalPool --> D3[Dense Layer (32 units)]
+    Tok["Tokenize URL String"] --> Emb["Embedding Layer"]
+    Emb --> CNN1["Conv1D (64 filters)"]
+    CNN1 --> Pool["MaxPooling"]
+    Pool --> CNN2["Conv1D (128 filters)"]
+    CNN2 --> GlobalPool["GlobalMaxPooling"]
+    GlobalPool --> D3["Dense Layer (32 units)"]
     end
 
-    D2 --> Concat[Concatenate / Fusion]
+    D2 --> Concat["Concatenate / Fusion"]
     D3 --> Concat
 
-    Concat --> Final1[Dense Layer (64 units)]
-    Final1 --> Dropout[Dropout (0.4)]
-    Dropout --> Final2[Dense Layer (32 units)]
-    Final2 --> Out[Output Node (Sigmoid)]
+    Concat --> Final1["Dense Layer (64 units)"]
+    Final1 --> Dropout["Dropout (0.4)"]
+    Dropout --> Final2["Dense Layer (32 units)"]
+    Final2 --> Out["Output Node (Sigmoid)"]
 ```
 
 ### Feature Breakdown (57 Features)
