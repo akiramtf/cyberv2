@@ -5,6 +5,7 @@ import numpy as np
 import logging
 import sys
 import os
+import matplotlib.pyplot as plt
 
 # Add src to path so we can import phishing_detector
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
@@ -108,7 +109,7 @@ def main():
         X_tabular_val=None, X_text_val=None, y_val=None
     )
     
-    # 4. Save
+    # 4. Save Model
     model.save(MODEL_DIR)
     tokenizer.save(os.path.join(MODEL_DIR, "tokenizer.json"))
     
@@ -116,6 +117,47 @@ def main():
     duration = end_time - start_time
     logger.info(f"Training complete. Model saved.")
     logger.info(f"Total execution time: {duration:.2f} seconds ({duration/60:.2f} minutes)")
+
+    # 5. Generate Analysis
+    logger.info("Generating training analysis...")
+    
+    # Save training results text
+    with open("training_results.txt", "w") as f:
+        f.write(f"Training Duration: {duration:.2f} seconds ({duration/60:.2f} minutes)\n")
+        f.write(f"Final Training Accuracy: {history['accuracy'][-1]:.4f}\n")
+        f.write(f"Final Training Loss: {history['loss'][-1]:.4f}\n")
+        if 'val_accuracy' in history:
+            f.write(f"Final Validation Accuracy: {history['val_accuracy'][-1]:.4f}\n")
+            f.write(f"Final Validation Loss: {history['val_loss'][-1]:.4f}\n")
+
+    # Plot convergence curves
+    plt.figure(figsize=(12, 5))
+
+    # Plot Loss
+    plt.subplot(1, 2, 1)
+    plt.plot(history['loss'], label='Train Loss')
+    if 'val_loss' in history:
+        plt.plot(history['val_loss'], label='Val Loss')
+    plt.title('Model Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True)
+
+    # Plot Accuracy
+    plt.subplot(1, 2, 2)
+    plt.plot(history['accuracy'], label='Train Accuracy')
+    if 'val_accuracy' in history:
+        plt.plot(history['val_accuracy'], label='Val Accuracy')
+    plt.title('Model Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig('training_convergence.png')
+    logger.info("Analysis saved to training_convergence.png and training_results.txt")
 
 if __name__ == "__main__":
     main()
