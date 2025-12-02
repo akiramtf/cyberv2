@@ -1,6 +1,6 @@
 # Zero-day Phishing Detector (Hybrid Deep Learning)
 
-A state-of-the-art phishing detection system powered by a **Hybrid Deep Learning Architecture**. This model fuses a **Convolutional Neural Network (CNN)** for raw text analysis with a **Multi-Layer Perceptron (MLP)** for engineered feature processing, achieving **99.23% accuracy** and a near-zero false positive rate.
+A state-of-the-art phishing detection system powered by a **Hybrid Deep Learning Architecture**. This model fuses a **Convolutional Neural Network (CNN)** for raw text analysis with a **Multi-Layer Perceptron (MLP)** for engineered feature processing, achieving **99.44% accuracy** and a near-zero false positive rate.
 
 ---
 
