@@ -10,7 +10,7 @@ A state-of-the-art phishing detection system powered by a **Hybrid Deep Learning
 - **Dual-Input Analysis**:
   - **Text Branch**: Reads raw URLs to find semantic patterns (e.g., "secure-login").
   - **Feature Branch**: Analyzes 57 explicit features (length, entropy, DNS, etc.).
-- **Superior Performance**: 99.23% Accuracy, 0.54% False Positive Rate.
+- **Superior Performance**: 99.44% Accuracy, 0.52% False Positive Rate.
 - **Production Ready**: FastAPI-based REST API with real-time inference.
 - **Web UI**: Clean, modern interface for testing URLs.
 
