@@ -20,37 +20,6 @@ A state-of-the-art phishing detection system powered by a **Hybrid Deep Learning
 
 Our system employs a dual-branch neural network architecture that processes the URL from two distinct perspectives before fusing the information for a final decision.
 
-### System Architecture
-
-```mermaid
-graph TD
-    URL["Input URL"] --> FE
-    URL --> Tok
-
-    subgraph "Branch A: Feature Engineering (MLP)"
-    FE["Extract 57 Features"] --> Scale["Standard Scaler"]
-    Scale --> D1["Dense Layer (64 units)"]
-    D1 --> D2["Dense Layer (32 units)"]
-    end
-
-    subgraph "Branch B: Text Analysis (CNN)"
-    Tok["Tokenize URL String"] --> Emb["Embedding Layer"]
-    Emb --> CNN1["Conv1D (64 filters)"]
-    CNN1 --> Pool["MaxPooling"]
-    Pool --> CNN2["Conv1D (128 filters)"]
-    CNN2 --> GlobalPool["GlobalMaxPooling"]
-    GlobalPool --> D3["Dense Layer (32 units)"]
-    end
-
-    D2 --> Concat["Concatenate / Fusion"]
-    D3 --> Concat
-
-    Concat --> Final1["Dense Layer (64 units)"]
-    Final1 --> Dropout["Dropout (0.4)"]
-    Dropout --> Final2["Dense Layer (32 units)"]
-    Final2 --> Out["Output Node (Sigmoid)"]
-```
-
 ### Feature Breakdown (57 Features)
 
 The model utilizes **57 carefully engineered features** to capture both structural and infrastructure-based anomalies:
@@ -77,11 +46,11 @@ The Hybrid Deep Learning model delivers state-of-the-art results, significantly 
 
 | Metric | Performance |
 | :--- | :--- |
-| **Accuracy** | **99.23%** |
-| **Precision** | **99.46%** |
-| **Recall** | **99.00%** |
-| **F1-Score** | **0.9923** |
-| **False Positive Rate** | **0.54%** |
+| **Accuracy** | **99.44%** |
+| **Precision** | **99.48%** |
+| **Recall** | **99.40%** |
+| **F1-Score** | **0.9944** |
+| **False Positive Rate** | **0.52%** |
 
 ---
 
@@ -177,9 +146,6 @@ url_phishing_detector/
     └── hybrid_v1/                   # Saved Hybrid Model
 ```
 
-## 📄 License
-
-MIT License
 
 ## 🙏 Acknowledgments
 
